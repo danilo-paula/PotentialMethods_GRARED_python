@@ -51,6 +51,11 @@ eparcela = Entry(textvar=caminho_planilha)
 eparcela.bind("<Return>", aritmetica)
 eparcela.pack()
 
+#Fazer os radiobutons e entrys
+#!!!!!
+b_densidade=True
+b_fator_gravim=True
+
 
     #Configuradores de Janela
     #**********************************************
@@ -70,39 +75,38 @@ p_mat_ler = pd.read_excel(planilha_entrada, sheetname='Plan1',header=None,skipro
 p_matriz=p_mat_ler.values.T #Salvamento da planilha lida em matriz transposta de arrays
 
 ponto = p_matriz[0]#Identificador do ponto
-g_med_lido = p_matriz[1] #Gravidade Lida no equipamento
+g_l1= p_matriz[1]#Primeira Leitura
+g_l2= p_matriz[2]#Segunda Leitura
+g_l3= p_matriz[3]#Terceira Leitura
 
-fator_gravim = p_matriz[2]#Fator gravimétrico da Região
-
-Lat_gra = p_matriz[3]#Latitude Graus
-Lat_min = p_matriz[4]#Latitude Minutos
-Lat_seg = p_matriz[5]#Latitude segundos
-
-
-Lon_gra = p_matriz[6]#Longitude Graus
-Lon_min = p_matriz[7]#Longitude Minutos
-Lon_seg = p_matriz[8]#Longitude segundos
-
-alt_m = p_matriz[9]#Altitude geométrica obtida pelos receptores GNSS em metros
-
-hora = p_matriz[10]#Hora Local da leitura
-minuto = p_matriz[11]#Minuto Local da leitura
-
-dia = p_matriz[12]#Dia da leitura
-mes = p_matriz[13]#Mês da leitura
-ano = p_matriz[14]#Ano da leitura
-fuso_horario = p_matriz[15]#Fuso-horário do local
-
-azim_navio_gra = p_matriz[16]#Azimute de navegação Graus
-azim_navio_min = p_matriz[17]#Azimute de navegação Minutos
-azim_navio_seg = p_matriz[18]#Azimute de navegação Segundos
-v_navio = p_matriz[19]#Velocidade da embarcação em nós
-
-densidade_crustal = p_matriz[20]#Densidade da parte crustal da região g/cm^3
-
-p_atm_kpa = p_matriz[21]#Pressão atmosférica em kPa
+Lat_gra = p_matriz[4]#Latitude Graus
+Lat_min = p_matriz[5]#Latitude Minutos
+Lat_seg = p_matriz[6]#Latitude segundos
 
 
+Lon_gra = p_matriz[7]#Longitude Graus
+Lon_min = p_matriz[8]#Longitude Minutos
+Lon_seg = p_matriz[9]#Longitude segundos
+
+alt_m = p_matriz[10]#Altitude geométrica obtida pelos receptores GNSS em metros
+
+hora = p_matriz[11]#Hora Local da leitura
+minuto = p_matriz[12]#Minuto Local da leitura
+
+
+p_atm_kpa = p_matriz[13]#Pressão atmosférica em kPa
+
+
+#implementar com radiobutons
+fator_gravim_lido=2#Fator gravimétrico da Região
+fuso_horario =  2#Fuso-horário do local
+
+#implementar com entry
+densidade_lida=2#Densidade da parte crustal da região g/cm^3
+
+dia = 3#Dia da leitura
+mes = 12#Mês da leitura
+ano = 2017#Ano da leitura
 #--------------------------------------------------
 #Constantes
 #--------------------------------------------------
@@ -110,20 +114,57 @@ densidade_med=2.67 #Densidade média/padrão do materia crustal
 fator_gravim_med=1.20 #Fator gravimétrico médio
 
 #--------------------------------------------------
+#Escolha de valores
+#--------------------------------------------------
+if b_densidade==False:  #Escolha entre valor padrão de densidade crustal e valor fornecido
+    densidade=densidade_lida
+else:
+    densidade=densidade_med
+
+if b_fator_gravim==False: #Escolha entre valor padrão de fator gravimétrico e valor fornecido
+    fator_gravim=fator_gravim_lido
+else:
+    fator_gravim=fator_gravim_med
+    
+
+#--------------------------------------------------
 #Conversões preliminares
 #--------------------------------------------------
-Lat_graus_dec=Lat_gra+(Lat_min/60)+(Lat_seg/3600) #Latitude em Graus decimais
+g_med_lido = (g_l1+g_l2+g_l3)/3 #Média das 3 leituras
+
+Lat_graus_dec = Lat_gra+(Lat_min/60)+(Lat_seg/3600) #Latitude em Graus decimais
 Lat_rad=np.radians(Lat_graus_dec) #Latitude em radianos
 
-Lon_graus_dec=Lon_gra+(Lon_min/60)+(Lon_seg/3600) #Longitude em Graus decimais
+Lon_graus_dec = Lon_gra+(Lon_min/60)+(Lon_seg/3600) #Longitude em Graus decimais
 Lon_rad=np.radians(Lon_graus_dec) #Longitude em radianos
 
-alt_cm=alt_m*100 #Altitude geométrica obtida pelos receptores GNSS em centimetros
+alt_cm = alt_m*100 #Altitude geométrica obtida pelos receptores GNSS em centimetros
 
 
 #--------------------------------------------------
 #Correções e Transformações importantes
 #--------------------------------------------------
 
-    #Correção Bouguer
+    #Correção Bouguer Simples
     #**********************************************
+cb=[]
+for i in alt_m:
+    if i>0:
+        c_b=0.04192*densidade*i
+        cb=np.append(cb,c_b)
+    elif i<0:
+        c_b=0.08384*densidade*i
+        cb=np.append(cb,c_b)
+    else:
+        c_b=0
+        cb=np.append(cb,c_b)
+   
+    #Correção Ar-livre
+    #**********************************************
+ca=0.3086*alt_m
+
+    #Correção Precipitação, para terrenos extremamente chuvosos
+    #**********************************************
+cprec=0.04192*alt_m
+
+
