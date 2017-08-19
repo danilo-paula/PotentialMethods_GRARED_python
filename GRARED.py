@@ -98,14 +98,11 @@ minuto = p_matriz[12]#Minuto Local da leitura
 p_atm_kpa = p_matriz[13]#Pressão atmosférica em kPa
 
 
-#!!!!implementar com radiobutons
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-fator_gravim_lido=1.22#Fator gravimétrico da Região
 
 #!!!!!implementar com desizantes
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 fuso_horario =-3#Fuso-horário do local
+fator_gravim_lido=1.22#Fator gravimétrico da Região
 
 #!!!!!!!!!!implementar com entry
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -121,9 +118,24 @@ ano = 2017#Ano da leitura
 densidade_med=2.67 #Densidade média/padrão do materia crustal
 fator_gravim_med=1.20 #Fator gravimétrico médio
 
+M_l=7.34581119761*10**(25)#Massa da lua em gramas
+G=6.67428*10**(-8) #Constante gravitacional universal
+a=6.378137*10**(8)#Raio equatorial da Terra em cm
+c=3.844031*10**(10)#Distância média entre o centro da Terra e da Lua em cm
+e=0.05490#Ecentricidade da órbita lunar
+m=0.074804#Taxa média de movimento do Sol em relação à  Lua
+w_t=23+(27/60)+(8.26/3600)#Obliquidade da ecliptica em 1 de Janeiro de 1900 em Graus decimais
+i=5+(8/60)+(43.3546/3600)#Ângulo entre a órbita lunar e o plano da ecliptica em Graus decimais
+
+#!!!!!!!!!!Pode mudar com GRS67/80/84, ver http://www.ufrgs.br/engcart/Teste/refer_exp.html
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+f=(1/298.257222101)#Achatamento do elipsoide
+
 #--------------------------------------------------
 #Escolha de valores
 #--------------------------------------------------
+#!!!!!!!!!!implementar com check butons
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 if b_densidade==False:  #Escolha entre valor padrão de densidade crustal e valor fornecido
     densidade=densidade_lida
 else:
@@ -148,7 +160,7 @@ Lon_rad=np.radians(Lon_graus_dec) #Longitude em radianos
 
 alt_cm = alt_m*100 #Altitude geométrica obtida pelos receptores GNSS em centimetros
 
-    #Cálculo de Séculos à partir de 31/dez/1899
+    #Cálculo de Séculos Julianos à partir de 31/dez/1899
     #**********************************************
 dia_c=dia+(hora/24)+(minuto/(60*24))
 jd_inicial=(1461*(1899+4800+(12-14)/12))/4+(367*(12-2-12*(( 12-14)/12)))/12-(3*((1899+4900+(12-14)/12)/100))/4+31-32075
