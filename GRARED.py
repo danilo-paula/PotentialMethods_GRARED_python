@@ -69,7 +69,8 @@ mainloop()  #Laço de tratamento de eventos
 #--------------------------------------------------
 #Variáveis de entrada
 #--------------------------------------------------
-planilha_entrada="GRARED_P_valores.xlsx" #!!!!Trocar no final,esta é de testes
+planilha_entrada="GRARED_P_valores.xlsx" #!!!!Trocar no final para "GRARED_P.xlsx", esta é de testes
+                                         #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 p_mat_ler = pd.read_excel(planilha_entrada, sheetname='Plan1',header=None,skiprows=2,dtype=float) #Leitura interna da planilha
 p_matriz=p_mat_ler.values.T #Salvamento da planilha lida em matriz transposta de arrays
@@ -97,11 +98,18 @@ minuto = p_matriz[12]#Minuto Local da leitura
 p_atm_kpa = p_matriz[13]#Pressão atmosférica em kPa
 
 
-#implementar com radiobutons
-fator_gravim_lido=2#Fator gravimétrico da Região
-fuso_horario =  2#Fuso-horário do local
+#!!!!implementar com radiobutons
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-#implementar com entry
+fator_gravim_lido=1.22#Fator gravimétrico da Região
+
+#!!!!!implementar com desizantes
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+fuso_horario =-3#Fuso-horário do local
+
+#!!!!!!!!!!implementar com entry
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 densidade_lida=2#Densidade da parte crustal da região g/cm^3
 
 dia = 3#Dia da leitura
@@ -140,6 +148,12 @@ Lon_rad=np.radians(Lon_graus_dec) #Longitude em radianos
 
 alt_cm = alt_m*100 #Altitude geométrica obtida pelos receptores GNSS em centimetros
 
+    #Cálculo de Séculos à partir de 31/dez/1899
+    #**********************************************
+dia_c=dia+(hora/24)+(minuto/(60*24))
+jd_inicial=(1461*(1899+4800+(12-14)/12))/4+(367*(12-2-12*(( 12-14)/12)))/12-(3*((1899+4900+(12-14)/12)/100))/4+31-32075
+jd =(1461*(ano+4800+(mes-14)/12))/4+(367*(mes-2-12*(( mes-14)/12)))/12-(3*((ano+4900+(mes-14)/12)/100))/4+dia_c-32075
+jc=((jd-jd_inicial)*24*60)/52596000
 
 #--------------------------------------------------
 #Correções e Transformações importantes
