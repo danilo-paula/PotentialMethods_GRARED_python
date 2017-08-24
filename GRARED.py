@@ -152,6 +152,6 @@ ca=0.3086*alt_m
     #**********************************************
 cprec=0.04192*alt_m
 
-    #Correção do Efeito de Maré, também chamado de atração Luni-Solar
+    #Correção do Efeito de Maré
     #**********************************************
 
