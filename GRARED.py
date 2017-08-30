@@ -41,6 +41,9 @@ p_atm_kpa = p_matriz[13]#Pressão atmosférica em kPa
 
 
 
+planilha_conv="Tab_conv_G996.txt"
+gc1,gc2,gf0=np.loadtxt(planilha_conv,skiprows=1,unpack=True)
+
 #!!!!!implementar com desizantes
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 fuso_horario =-3#Fuso-horário do local
@@ -48,8 +51,9 @@ fator_gravim_lido=1.22#Fator gravimétrico da Região
 
 #!!!!!!!!!!implementar com entry
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+g_ref=9.8
 
-densidade_lida=2#Densidade da parte crustal da região g/cm^3
+densidade_lida=2.5#Densidade da parte crustal da região g/cm^3
 
 dia = 31#Dia da leitura
 mes = 10#Mês da leitura
@@ -100,7 +104,6 @@ else:
 #--------------------------------------------------
 #Conversões e cálculos preliminares
 #--------------------------------------------------
-g_med_lido = (g_l1+g_l2+g_l3)/3 #Média das 3 leituras
 
 Lat_graus_dec = Lat_gra+(Lat_min/60)+(Lat_seg/3600) #Latitude em Graus decimais
 Lat_rad=np.radians(Lat_graus_dec) #Latitude em radianos
@@ -118,6 +121,20 @@ jd_inicial=(1461*(1899+4800+(12-14)/12))/4+(367*(12-2-12*(( 12-14)/12)))/12-(3*(
 jd =(1461*(ano+4800+(mes-14)/12))/4+(367*(mes-2-12*(( mes-14)/12)))/12-(3*((ano+4900+(mes-14)/12)/100))/4+dia_c-32075
 jc=((jd-jd_inicial)*24*60)/52596000
 
+    #Cinversão de G instrumental para mGal
+    #**********************************************
+g_med_lido = (g_l1+g_l2+g_l3)/3 #Média das 3 leituras
+g_conv=[]
+contador=int(0)
+while len(g_conv) != len(g_med_lido): #Até a lista de acel. Grav. em mGals, não tiver o mesmo tamanho que a lista da acel. Grav. lida faça isso:
+    for item in gc1:                                #   Pegue um valor N de sua tabela de leituras, iniciando com o primeiro valor e indo até o ultimo,
+        diferença=g_med_lido[contador]-item         # faça a diferença entre esse N e todos os valores de gc1, se 0<=Diferença<100, então aplique a conversão
+        if diferença < 100 and diferença>=0:        # e adicione o resultado na lista de acel. Grav. em mGals, até ter feito tudo isto com todos os valores da
+            gc1l=gc1.tolist()                       # tabela de leitura.
+            gc_pos=gc1l.index(item)                 
+            gp=gc2[gc_pos]+(gf0[gc_pos]*(diferença))
+            g_conv=np.append(g_conv,gp) 
+    contador=contador+1
 
 #--------------------------------------------------
 #Correções e Transformações importantes
@@ -133,6 +150,10 @@ g_teor80=978032.7*(1+0.0053024*((np.sin(Lat_rad))**2)-0.0000058*((np.sin(2*Lat_r
     #Cálculo de Aceleração do GRS84
     #**********************************************
 g_teor84=(9.7803267714*((1+0.00193185138639*((np.sin(Lat_rad))**2))/((1-0.00669437999013*((np.sin(Lat_rad))**2)**(1/2)))))*(100000)
+
+    #Correção da deriva instrumental
+    #**********************************************
+
 
     #Correção Bouguer Simples
     #**********************************************
@@ -155,47 +176,3 @@ ca=0.3086*alt_m
     #Correção Precipitação, para terrenos extremamente chuvosos
     #**********************************************
 cprec=0.04192*alt_m
-
-    #Correção do Efeito de Maré, também chamado de atração Luni-Solar
-    #**********************************************
-#CORRIGIR URGENTEMENTE SENOS E COSSENOS PARA ENTRADA EM RADIANOS
-        #Componente Lunar
-        #----------------
-b=a-(a*f) #2.6.1.1.1.1.1
-e_e2=(a**2-b**2)/(b**2) #2.6.1.1.1.1
-Ç=(1/(1+e_e2*np.sin(Lat_rad)**2))**(0.5) #2.6.1.1.1
-r=Ç*a+alt_cm #2.6.1.1
-a_=1/(c*e**2) #2.6.1.2.1
-s=(270+26/60+11.72/3600)+(1336*360+1108406.05/3600)*jc+(7.128/3600)*jc**2+(0.0072/3600*jc**3) #2.6.1.2.2 
-p=(334+19/60+46.42/3600)+(11*360+392522.51/3600)*jc-(37.15/3600)*jc**2-(0.036/3600)*jc**3 #2.6.1.2.3 
-h_s=(279+41/60+48.05/3600)+(129602768.11/3600)*jc+(1.08/3600)*jc**2 #2.6.1.2.4  
-d_l=1/((1/c)+a_*e*np.cos(s-p)+a_*e**2*np.cos(2*(s-p))+(15/8)*a_*m*e*np.cos(s-2*h_s+p)+a_*m**2*np.cos(2*(s-h_s))) #2.6.1.2
-n_lambda=(259+10/60+57.12/3600)-(5*360+482912.63/3600)*jc+(7.58/3600)*jc**2+(0.008/3600)*jc**3 
-I=np.arccos(np.cos(w_t)*np.cos(i)-np.sin(w_t)*np.sin(i)*np.cos(n_lambda)) #2.6.1.3.1 !!!!!!!!!!!!!!!Arco que deve ser convertido
-v=np.arcsin(np.sin(i)*np.sin(n_lambda))/np.sin(I) #2.6.1.3.2.1  !!!!!!!!!!!!!!!!!!!!!!!!Arco que deve ser convertido
-t_a=(15*((hora_utc+minuto/60)-12)-Lon_graus_dec) #2.6.1.3.2.2 
-X=(t_a+h_s-v) #2.6.1.3.2 
-seno_alfa=np.sin(w_t)*np.sin(n_lambda)*np.sin(I) #2.6.1.3.3.1.1.1.1
-cosseno_alfa=np.cos(n_lambda)*np.cos(v)+np.sin(n_lambda)*np.sin(v)*np.cos(w_t) #2.6.1.3.3.1.1.1.2
-alfa=2*np.arctan(seno_alfa/(1+cosseno_alfa)) #2.6.1.3.3.1.1.1 !!!!!!!Arco que deve ser convertido  --->Reaveriguar valores associados, caso resultado final seja incompativel
-E=n_lambda-alfa #2.6.1.3.3.1.1
-sigma=s-E #2.6.1.3.3.1 
-l=sigma-2*e*np.sin(s-p)+(5/4)*e**2*np.sin(2*(s-p))+(15/4)*m*e*np.sin(s-2*h_s+p)+1.375*m**2*np.sin(2*(s-h_s)) #2.6.1.3.3 
-cosseno_t_l=np.sin(Lat_rad)*np.sin(I)*np.sin(l)+np.cos(Lat_rad)*(np.cos(l/2)**2*np.cos(l+X)) #2.6.1.3 
-C_l=(((G*M_l*r)/(d_l**3))*(3*cosseno_t_l**2-1)+((3/2)*((G*M_l*r**2)/(d_l**4)))*(5*cosseno_t_l**3-3*cosseno_t_l)) #2.6.1
-
-        #Componente Solar
-        #----------------
-e_1=1.675104*10**(-2)-4.180*10**(-5)*jc-1.26*10**(-7)*jc**2 #2.6.1.1
-a1_=1/(c_s*(1-e_1**2)) #2.6.1.2
-p_s=(281+13/60+15/3600)+(6189.03/3600)*jc+(1.63/3600)*jc**2+(0.012/3600)*jc**3 #2.6.2.1.3 
-d_s=1/(c_s+a1_*e_1*np.cos(h_s-p_s)) #2.6.2.1 --->Reaveriguar valores associados, caso resultado final seja incompativel
-l_s=h_s+2*e_1*np.sin(h_s-p_s) #2.6.2.2.1
-X_s=t_a+h_s #2.6.2.2.2
-t_s=np.sin(Lat_rad)*np.sin(w_t)*np.sin(l_s)+np.cos(Lon_rad)*(np.cos(w_t/2)**2*np.cos(l_s-X_s)+np.sin(w_t/2)**2*np.cos(l_s-X_s)) #2.6.2.2
-C_s=((G*M_s*r)/(d_s**3))*(3*np.cos(t_s)**2-1) #2.6.2
-
-cls=(C_l+C_s)*fator_gravim #2.6
-
-
-
