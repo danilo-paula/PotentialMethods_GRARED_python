@@ -64,21 +64,6 @@ ano = 1996#Ano da leitura
 densidade_med=2.67 #Densidade média/padrão do materia crustal
 fator_gravim_med=1.20 #Fator gravimétrico médio
 
-M_l=7.34581119761*10**(25)#Massa da lua em gramas
-M_s=1.9884158*10**(33)#Massa do sol em gramas
-G=6.67428*10**(-8) #Constante gravitacional universal
-a=6.378137*10**(8)#Raio equatorial da Terra em cm
-c=3.844031*10**(10)#Distância média entre o centro da Terra e da Lua em cm
-c_s=1.49597870691*10**(13)#Distância média entre o centro da Terra e do Sol em cm 
-e=0.05490#Ecentricidade da órbita lunar
-m=0.074804#Taxa média de movimento do Sol em relação à  Lua
-w_t=(23+(27/60)+(8.26/3600))#Obliquidade da ecliptica em 1 de Janeiro de 1900 em Graus decimais
-i=5+(8/60)+(43.3546/3600)#Ângulo entre a órbita lunar e o plano da ecliptica em Graus decimais
-
-#!!!!!!!!!!Pode mudar com GRS67/80/84, ver http://www.ufrgs.br/engcart/Teste/refer_exp.html
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-f=(1/298.257222101)#Achatamento do elipsoide
-
 #--------------------------------------------------
 #Escolha de valores
 #--------------------------------------------------
