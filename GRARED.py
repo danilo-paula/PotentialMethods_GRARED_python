@@ -107,7 +107,7 @@ jd_inicial=(1461*(1899+4800+(12-14)/12))/4+(367*(12-2-12*(( 12-14)/12)))/12-(3*(
 jd =(1461*(ano+4800+(mes-14)/12))/4+(367*(mes-2-12*(( mes-14)/12)))/12-(3*((ano+4900+(mes-14)/12)/100))/4+dia_c-32075
 jc=((jd-jd_inicial)*24*60)/52596000
 
-    #Cinversão de G instrumental para mGal
+    #Conversão de acel. Grav. instrumental para mGal
     #**********************************************
 g_med_lido = (g_l1+g_l2+g_l3)/3 #Média das 3 leituras
 g_conv=[]
