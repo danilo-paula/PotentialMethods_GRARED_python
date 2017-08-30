@@ -98,6 +98,7 @@ Lon_rad=np.radians(Lon_graus_dec) #Longitude em radianos
 
 alt_cm = alt_m*100 #Altitude geométrica obtida pelos receptores GNSS em centimetros
 
+hora_dec=(hora)+(minuto/(60))
 hora_utc=(hora-fuso_horario)
     #Cálculo de Séculos Julianos à partir de 31/dez/1899
     #**********************************************
@@ -138,8 +139,18 @@ g_teor84=(9.7803267714*((1+0.00193185138639*((np.sin(Lat_rad))**2))/((1-0.006694
 
     #Correção da deriva instrumental
     #**********************************************
+delta_t=np.zeros(1)
+contador2=int(1)
+while len(delta_t)!=len(hora_dec):
+    dt=hora_dec[contador2]-hora_dec[0]
+    delta_t=np.append(delta_t,dt)
+    contador2=contador2+1 
+if ponto[0] == ponto[-1]:
+    delta_t[-1]=hora_dec[-1]-hora_dec[0]
+    delta_g=g_conv[-1]-g_conv[0]
+    cd=(-delta_g/delta_t[-1])*delta_t
 
-
+    
     #Correção Bouguer Simples
     #**********************************************
 cb=[]
