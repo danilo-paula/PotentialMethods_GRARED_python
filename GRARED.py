@@ -55,9 +55,9 @@ g_ref=9.8
 
 densidade_lida=2.5#Densidade da parte crustal da região g/cm^3
 
-dia = 31#Dia da leitura
-mes = 10#Mês da leitura
-ano = 1996#Ano da leitura
+dia = 20#Dia da leitura
+mes = 8#Mês da leitura
+ano = 2015#Ano da leitura
 #--------------------------------------------------
 #Constantes
 #--------------------------------------------------
