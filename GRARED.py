@@ -27,18 +27,29 @@ class Packing:
         self.T_tipo_arquivo_entrada.grid(row=1,column=0,columnspan=4,rowspan=2,sticky=E)
         self.var_tipo=StringVar(toplevel)
         self.var_tipo.set('excel')
-        self.RB_excel=Radiobutton(self.frame, text='Excel', value='excel', variable=self.var_tipo)
-        self.RB_excel.grid(row=1,column=4,columnspan=4,sticky=W)
-        self.RB_txt=Radiobutton(self.frame, text='TXT Tabulado', value='txt', variable=self.var_tipo)
-        self.RB_txt.grid(row=2,column=4,columnspan=4,sticky=W)
-        
-        self.T_entrada=Label(self.frame, font=('Arial','10','bold'), text='Arquivo de dados:')
-        self.T_entrada.grid(row=1,column=8,columnspan=4,rowspan=2,sticky=E)
+        self.var_aba=StringVar(toplevel)
+        self.var_aba.set('Plan1')
         self.var_entrada=StringVar(toplevel)
         self.var_entrada.set('GRARED_P_exemplo.xlsx')
+        def muda_valor_aba_excel():
+            self.var_aba.set('Plan1')
+            self.var_entrada.set('GRARED_P_exemplo.xlsx')
+        def muda_valor_aba_txt():
+            self.var_aba.set('-------------Não Há--------------')
+            self.var_entrada.set('GRARED_P_exemplo.txt')
+        self.RB_excel=Radiobutton(self.frame, text='Excel', value='excel', variable=self.var_tipo, command=muda_valor_aba_excel)
+        self.RB_excel.grid(row=1,column=4,columnspan=4,sticky=W)
+        self.RB_txt=Radiobutton(self.frame, text='TXT Tabulado', value='txt', variable=self.var_tipo, command=muda_valor_aba_txt)
+        self.RB_txt.grid(row=2,column=4,columnspan=4,sticky=W)
+        self.T_entrada=Label(self.frame, font=('Arial','10','bold'), text='Arquivo de dados:')
+        self.T_entrada.grid(row=1,column=8,columnspan=4,sticky=E)
         self.E_entrada=Entry(self.frame, width=30,textvar=self.var_entrada)
-        self.E_entrada.grid(row=1,column=12,columnspan=6,rowspan=2,sticky=W)
-        
+        self.E_entrada.grid(row=1,column=12,columnspan=6,sticky=W)
+        self.T_aba=Label(self.frame, font=('Arial','10','bold'), text='Se excel, qual aba?')
+        self.T_aba.grid(row=2,column=8,columnspan=4,sticky=E)
+        self.E_aba=Entry(self.frame, width=30,textvar=self.var_aba)
+        self.E_aba.grid(row=2,column=12,columnspan=6,sticky=W)
+  
         self.T_conv=Label(self.frame, font=('Arial','10','bold'), text='Tabela de Conversão:')
         self.T_conv.grid(row=1,column=18,columnspan=4,rowspan=2,sticky=E)
         self.var_conv=StringVar(toplevel)
@@ -93,6 +104,7 @@ class Packing:
         
         def gerar_saida():
             tipo_arquivo=self.var_tipo.get()
+            aba=self.var_aba.get()
             nome_arquivo=self.E_entrada.get()
             planilha_conv=self.var_conv.get()
 
@@ -109,7 +121,7 @@ class Packing:
             if tipo_arquivo=='excel':
                 planilha_entrada=nome_arquivo 
 
-                p_mat_ler = pd.read_excel(planilha_entrada, sheetname='Plan1',header=None,skiprows=2,dtype=float) #Leitura interna da planilha
+                p_mat_ler = pd.read_excel(planilha_entrada, sheetname=aba,header=None,skiprows=2,dtype=float) #Leitura interna da planilha
                 p_matriz=p_mat_ler.values.T #Salvamento da planilha lida em matriz transposta de arrays
 
                 ponto = p_matriz[0]#Identificador do ponto
