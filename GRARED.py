@@ -9,40 +9,131 @@ import cx_Freeze
 from tkinter import *
 
 #--------------------------------------------------
+#Ambiente Tkinter
+#--------------------------------------------------
+class Packing:
+    def __init__(self, toplevel):
+        self.frame=Frame(toplevel).grid()
+
+
+        self.T_tipo_arquivo_entrada=Label(self.frame,font=('Arial','10'),
+                          text='Tipo de Arquivo: ')
+        self.T_tipo_arquivo_entrada.grid(row=0,column=0,columnspan=2,rowspan=2, padx=10)
+        self.var_tipo=StringVar(toplevel)
+        self.var_tipo.set('excel')
+
+        self.RB_excel=Radiobutton(self.frame, text='Excel', value='excel', variable=self.var_tipo)
+        self.RB_excel.grid(row=0,column=2,columnspan=2,sticky=W)
+        self.RB_txt=Radiobutton(self.frame, text='TXT Tabulado', value='txt', variable=self.var_tipo)
+        self.RB_txt.grid(row=1,column=2,columnspan=2,sticky=W)
+        
+        self.T_entrada=Label(self.frame, font=('Arial','10'), text='Arquivo de dados:')
+        self.T_entrada.grid(row=0,column=4,columnspan=2,rowspan=2,sticky=E,padx=20)
+        self.var_entrada=StringVar(toplevel)
+        self.var_entrada.set('GRARED_P_exemplo.xlsx')
+        self.E_entrada=Entry(self.frame, width=30,textvar=self.var_entrada)
+        self.E_entrada.grid(row=0,column=6,columnspan=4,rowspan=2,sticky=W,padx=5)
+        
+        self.T_conv=Label(self.frame, font=('Arial','10'), text='Tabela de Conversão:')
+        self.T_conv.grid(row=0,column=10,columnspan=2,rowspan=2,sticky=E,padx=30)
+        self.var_conv=StringVar(toplevel)
+        self.var_conv.set('Tab_conv_G996.txt')
+        self.E_conv=Entry(self.frame, width=30,textvar=self.var_conv)
+        self.E_conv.grid(row=0,column=12,columnspan=4,rowspan=2,sticky=W,padx=15)
+
+        #Variáveis gerais
+        #********************************************************************
+        self.T_daw=Label(self.frame, font=('Arial','15'),text='     ')
+        self.T_daw.grid(row=3,column=5,columnspan=3 )
+        self.T_dados_do_l=Label(self.frame,font=('Arial','10','bold'),
+                        text='Dados do levantamento')
+        self.T_dados_do_l.grid(row=4,column=6)
+        #Dia
+        self.T_dia=Label(self.frame,font=('Arial','10'),
+                        text='Dia')
+        self.T_dia.grid(row=5,column=0,sticky=E)
+        self.var_dia=DoubleVar(toplevel)
+        self.var_dia.set(int(1))
+        self.E_dia=Entry(self.frame, width=3, textvar=self.var_dia)
+        self.E_dia.grid(row=6,column=0,sticky=E)
+
+        #Mes
+        self.T_mes=Label(self.frame,font=('Arial','10'),
+                        text='Mês')
+        self.T_mes.grid(row=5,column=1)
+        self.var_mes=DoubleVar(toplevel)
+        self.var_mes.set(int(1))
+        self.E_mes=Entry(self.frame, width=3, textvar=self.var_mes)
+        self.E_mes.grid(row=6,column=1)
+
+        #Ano
+        self.T_ano=Label(self.frame,font=('Arial','10'),
+                        text='Ano')
+        self.T_ano.grid(row=5,column=2)
+        self.var_ano=DoubleVar(toplevel)
+        self.var_ano.set(int(2017))
+        self.E_ano=Entry(self.frame, width=5, textvar=self.var_ano)
+        self.E_ano.grid(row=6,column=2)
+
+
+        
+        
+        def gerar_saida():
+            tipo_arquivo=self.var_tipo.get()
+            nome_arquivo=self.E_entrada.get()
+            planilha_conv=self.var_conv.get()
+
+            dia=self.E_dia.get()
+            mes=self.E_mes.get()
+            ano=self.E_ano.get()
+            print(dia,mes,ano)
+            #_______________________________________
+            #_______________________________________
+            if tipo_arquivo=='excel':
+                planilha_entrada=nome_arquivo 
+
+                p_mat_ler = pd.read_excel(planilha_entrada, sheetname='Plan1',header=None,skiprows=2,dtype=float) #Leitura interna da planilha
+                p_matriz=p_mat_ler.values.T #Salvamento da planilha lida em matriz transposta de arrays
+
+                ponto = p_matriz[0]#Identificador do ponto
+                g_l1= p_matriz[1]#Primeira Leitura
+                g_l2= p_matriz[2]#Segunda Leitura
+                g_l3= p_matriz[3]#Terceira Leitura
+
+                Lat_gra = p_matriz[4]#Latitude Graus
+                Lat_min = p_matriz[5]#Latitude Minutos
+                Lat_seg = p_matriz[6]#Latitude segundos
+
+                Lon_gra = p_matriz[7]#Longitude Graus
+                Lon_min = p_matriz[8]#Longitude Minutos
+                Lon_seg = p_matriz[9]#Longitude segundos
+    
+                alt_m = p_matriz[10]#Altitude geométrica obtida pelos receptores GNSS em metros
+    
+                hora = p_matriz[11]#Hora Local da leitura
+                minuto = p_matriz[12]#Minuto Local da leitura
+
+                p_atm_kpa = p_matriz[13]#Pressão atmosférica em kPa
+            elif tipo_arquivo=='txt':
+                planilha_entrada=nome_arquivo
+                ponto,g_l1,g_l2,g_l3,Lat_gra,Lat_min,Lat_seg,Lon_gra,Lon_min,Lon_seg,alt_m,hora,minuto,p_atm_kpa=np.loadtxt(planilha_entrada, skiprows=1,unpack=True)
+
+
+            gc1,gc2,gf0=np.loadtxt(planilha_conv,skiprows=1,unpack=True)
+
+
+            #_______________________________________
+            #_______________________________________            
+        self.B_entrada_import=Button(text='Reduzir Dados e exportar para arquivos',command=gerar_saida).grid(row=20,column=3,sticky=E)
+raiz=Tk()
+Packing(raiz)
+raiz.mainloop()
+
+#--------------------------------------------------
 #Variáveis de entrada
 #--------------------------------------------------
-planilha_entrada="GRARED_P_valores.xlsx" #!!!!Trocar no final para "GRARED_P.xlsx", esta é de testes
-                                         #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-p_mat_ler = pd.read_excel(planilha_entrada, sheetname='Plan1',header=None,skiprows=2,dtype=float) #Leitura interna da planilha
-p_matriz=p_mat_ler.values.T #Salvamento da planilha lida em matriz transposta de arrays
-
-ponto = p_matriz[0]#Identificador do ponto
-g_l1= p_matriz[1]#Primeira Leitura
-g_l2= p_matriz[2]#Segunda Leitura
-g_l3= p_matriz[3]#Terceira Leitura
-
-Lat_gra = p_matriz[4]#Latitude Graus
-Lat_min = p_matriz[5]#Latitude Minutos
-Lat_seg = p_matriz[6]#Latitude segundos
 
 
-Lon_gra = p_matriz[7]#Longitude Graus
-Lon_min = p_matriz[8]#Longitude Minutos
-Lon_seg = p_matriz[9]#Longitude segundos
-
-alt_m = p_matriz[10]#Altitude geométrica obtida pelos receptores GNSS em metros
-
-hora = p_matriz[11]#Hora Local da leitura
-minuto = p_matriz[12]#Minuto Local da leitura
-
-
-p_atm_kpa = p_matriz[13]#Pressão atmosférica em kPa
-
-
-
-planilha_conv="Tab_conv_G996.txt"
-gc1,gc2,gf0=np.loadtxt(planilha_conv,skiprows=1,unpack=True)
 
 #!!!!!implementar com desizantes
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -53,37 +144,14 @@ fator_gravim_lido=1.22#Fator gravimétrico da Região
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 g_ref=9.8
 
-densidade_lida=2.5#Densidade da parte crustal da região g/cm^3
 
-dia = 20#Dia da leitura
-mes = 8#Mês da leitura
-ano = 2015#Ano da leitura
+
 #--------------------------------------------------
 #Constantes
 #--------------------------------------------------
-densidade_med=2.67 #Densidade média/padrão do materia crustal
-fator_gravim_med=1.20 #Fator gravimétrico médio
+densidade=2.67 #Densidade média/padrão do materia crustal
+fator_gravimo=1.20 #Fator gravimétrico médio
 
-#--------------------------------------------------
-#Escolha de valores
-#--------------------------------------------------
-
-#Fazer os radiobutons e entrys
-#!!!!!
-b_densidade=True
-b_fator_gravim=True
-
-#!!!!!!!!!!implementar com check butons
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-if b_densidade==False:  #Escolha entre valor padrão de densidade crustal e valor fornecido
-    densidade=densidade_lida
-else:
-    densidade=densidade_med
-
-if b_fator_gravim==False: #Escolha entre valor padrão de fator gravimétrico e valor fornecido
-    fator_gravim=fator_gravim_lido
-else:
-    fator_gravim=fator_gravim_med
     
 
 #--------------------------------------------------
@@ -172,3 +240,4 @@ ca=0.3086*alt_m
     #Correção Precipitação, para terrenos extremamente chuvosos
     #**********************************************
 cprec=0.04192*alt_m
+
