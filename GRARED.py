@@ -15,6 +15,48 @@ class Packing:
     def __init__(self, toplevel):
         self.frame=Frame(toplevel).grid()
 
+        
+        #Variáveis de entrada      
+        self.var_tipo=StringVar(toplevel)
+        self.var_tipo.set('excel')
+        self.var_aba=StringVar(toplevel)
+        self.var_aba.set('Plan1')
+        self.var_entrada=StringVar(toplevel)
+        self.var_entrada.set('GRARED_P_exemplo.xlsx')
+        self.var_conv=StringVar(toplevel)
+        self.var_conv.set('Tab_conv_G996.txt')
+
+        self.var_dia=DoubleVar(toplevel)
+        self.var_dia.set(int(1))
+        self.var_mes=DoubleVar(toplevel)
+        self.var_mes.set(int(1))
+        self.var_ano=DoubleVar(toplevel)
+        self.var_ano.set(int(2017))
+        self.var_fuso_horario=DoubleVar(toplevel)
+        self.var_fuso_horario.set(int(-3))
+        self.var_densidade=DoubleVar(toplevel)
+        self.var_densidade.set(float(2.67))
+        self.var_fator_grav=DoubleVar(toplevel)
+        self.var_fator_grav.set(float(1.20))
+        self.var_acel_absoluta=DoubleVar(toplevel)
+
+        self.var_deriva=IntVar(toplevel)
+        self.var_deriva.set(int(1))
+        self.var_free_air=IntVar(toplevel)
+        self.var_free_air.set(int(1))
+        self.var_bouguer=IntVar(toplevel)
+        self.var_bouguer.set(int(1))
+        self.var_patm=IntVar(toplevel)
+        self.var_patm.set(int(1))
+        self.var_cls=IntVar(toplevel)
+
+        self.var_elipsoide=StringVar(toplevel)
+        self.var_elipsoide.set('grs84')
+
+        self.var_saida_txt=StringVar(toplevel)
+        self.var_saida_txt.set('dados_reduzidos.txt')
+        self.var_saida_excel=StringVar(toplevel)
+        self.var_saida_excel.set('dados_reduzidos.xlsx')
 
         #ENTRADA DE DADOS
         #*******************************************************************************
@@ -25,12 +67,6 @@ class Packing:
         self.T_tipo_arquivo_entrada=Label(self.frame,font=('Arial','10','bold'),
                           text='Tipo de Arquivo: ')
         self.T_tipo_arquivo_entrada.grid(row=1,column=0,columnspan=4,rowspan=2,sticky=E)
-        self.var_tipo=StringVar(toplevel)
-        self.var_tipo.set('excel')
-        self.var_aba=StringVar(toplevel)
-        self.var_aba.set('Plan1')
-        self.var_entrada=StringVar(toplevel)
-        self.var_entrada.set('GRARED_P_exemplo.xlsx')
         def muda_valor_aba_excel():
             self.var_aba.set('Plan1')
             self.var_entrada.set('GRARED_P_exemplo.xlsx')
@@ -50,14 +86,12 @@ class Packing:
         self.E_aba=Entry(self.frame, width=30,textvar=self.var_aba)
         self.E_aba.grid(row=2,column=12,columnspan=6,sticky=W)
   
-        self.T_conv=Label(self.frame, font=('Arial','10','bold'), text='Tabela de Conversão:')
+        self.T_conv=Label(self.frame, font=('Arial','10','bold'), text='    Tabela de Conversão:')
         self.T_conv.grid(row=1,column=18,columnspan=4,rowspan=2,sticky=E)
-        self.var_conv=StringVar(toplevel)
-        self.var_conv.set('Tab_conv_G996.txt')
         self.E_conv=Entry(self.frame, width=30,textvar=self.var_conv)
         self.E_conv.grid(row=1,column=22,columnspan=6,rowspan=2,sticky=E,padx=15)
 
-        #Variáveis gerais
+        #DADOS DO LEVANTAMENTO
         #********************************************************************
         self.T_dados_do_l=Label(self.frame,font=('Arial','10','bold','underline'),
                         text='Dados do levantamento')
@@ -66,8 +100,6 @@ class Packing:
         self.T_dia=Label(self.frame,font=('Arial','10','bold'),
                         text='Dia')
         self.T_dia.grid(row=4,column=2,rowspan=2)
-        self.var_dia=DoubleVar(toplevel)
-        self.var_dia.set(int(1))
         self.E_dia=Entry(self.frame, width=4, textvar=self.var_dia)
         self.E_dia.grid(row=6,column=2)
 
@@ -75,8 +107,6 @@ class Packing:
         self.T_mes=Label(self.frame,font=('Arial','10','bold'),
                         text='Mês')
         self.T_mes.grid(row=4,column=3,rowspan=2)
-        self.var_mes=DoubleVar(toplevel)
-        self.var_mes.set(int(1))
         self.E_mes=Entry(self.frame, width=4, textvar=self.var_mes)
         self.E_mes.grid(row=6,column=3)
 
@@ -84,8 +114,6 @@ class Packing:
         self.T_ano=Label(self.frame,font=('Arial','10','bold'),
                         text='Ano')
         self.T_ano.grid(row=4,column=4,columnspan=2,rowspan=2)
-        self.var_ano=DoubleVar(toplevel)
-        self.var_ano.set(int(2017))
         self.E_ano=Entry(self.frame, width=6, textvar=self.var_ano)
         self.E_ano.grid(row=6,column=4,columnspan=2)
 
@@ -96,13 +124,80 @@ class Packing:
         self.T_horario=Label(self.frame,font=('Arial','10','bold'),
                         text='Horário')
         self.T_horario.grid(row=5,column=8,columnspan=2)
-        self.var_fuso_horario=DoubleVar(toplevel)
-        self.var_fuso_horario.set(int(-3))
-        self.E_fuso_horario=Entry(self.frame, width=4, textvar=self.var_fuso_horario)
-        self.E_fuso_horario.grid(row=6,column=8,rowspan=2,sticky=E)
-        
-        
+        self.E_fuso_horario=Entry(self.frame, width=5, textvar=self.var_fuso_horario)
+        self.E_fuso_horario.grid(row=6,column=8,sticky=E)
+
+        #Densidade crustal local
+        self.T_densidade=Label(self.frame,font=('Arial','10','bold'),
+                        text='Densidade')
+        self.T_densidade.grid(row=4,column=11,columnspan=3)
+        self.T_crustal=Label(self.frame,font=('Arial','10','bold'),
+                        text='Crust. (cgs)')
+        self.T_crustal.grid(row=5,column=11,columnspan=3)
+        self.E_densidade=Entry(self.frame, width=6, textvar=self.var_densidade)
+        self.E_densidade.grid(row=6,column=11,columnspan=3)
+
+        #Fator Gravimétrico
+        self.T_fator=Label(self.frame,font=('Arial','10','bold'),
+                        text='Fator')
+        self.T_fator.grid(row=4,column=15,columnspan=3)
+        self.T_grav=Label(self.frame,font=('Arial','10','bold'),
+                        text='Gravimétrico')
+        self.T_grav.grid(row=5,column=15,columnspan=3)
+        self.E_fator_grav=Entry(self.frame, width=6, textvar=self.var_fator_grav)
+        self.E_fator_grav.grid(row=6,column=15,columnspan=3)
+
+        #Aceleração grav. absoluta da Primeira estação
+        self.T_acel_absoluta=Label(self.frame,font=('Arial','10','bold'),
+                        text='Aceleração grav. absoluta da Primeira estação (mGal)')
+        self.T_acel_absoluta.grid(row=4,column=19,columnspan=9,rowspan=2, padx=10)
+        self.E_acel_absoluta=Entry(self.frame, textvar=self.var_acel_absoluta)
+        self.E_acel_absoluta.grid(row=6,column=19,columnspan=9)
+
+        #ESCOLHA DAS CORREÇÕES
+        #********************************************************************
+        self.T_edas=Label(self.frame,font=('Arial','10','bold','underline'),
+                        text='Escolha das correções')
+        self.T_edas.grid(row=7,column=11,columnspan=9,sticky=S,pady=27)
+
+        self.CB_deriva=Checkbutton(text='Deriva Instrumental', var=self.var_deriva)
+        self.CB_deriva.grid(row=8,column=1,columnspan=5,sticky=N,pady=15)
+        self.CB_free_air=Checkbutton(text='Free-Air', var=self.var_free_air)
+        self.CB_free_air.grid(row=8,column=7,columnspan=4,sticky=N,pady=15)
+        self.CB_bouguer=Checkbutton(text='Bouguer Simples', var=self.var_bouguer)
+        self.CB_bouguer.grid(row=8,column=12,columnspan=5,sticky=N,pady=15)
+        self.CB_patm=Checkbutton(text='Presão Atmosférica', var=self.var_patm)
+        self.CB_patm.grid(row=8,column=18,columnspan=5,sticky=N,pady=15)             
+        self.CB_cls=Checkbutton(text='Efeito de Maré', var=self.var_cls)
+        self.CB_cls.grid(row=8,column=24,columnspan=4,sticky=N,pady=15)
+
+        self.T_elipsoide=Label(self.frame, font=('Arial','10','bold'), text='Elipsoide de referência:')
+        self.T_elipsoide.grid(row=9,column=8,columnspan=5)
+        self.RB_grs67=Radiobutton(self.frame, text='GRS67', value='grs67', variable=self.var_elipsoide)
+        self.RB_grs67.grid(row=9,column=13,columnspan=3)
+        self.RB_grs80=Radiobutton(self.frame, text='GRS80', value='grs80', variable=self.var_elipsoide)
+        self.RB_grs80.grid(row=9,column=17,columnspan=3)
+        self.RB_grs84=Radiobutton(self.frame, text='GRS84', value='grs84', variable=self.var_elipsoide)
+        self.RB_grs84.grid(row=9,column=21,columnspan=3)
+
+        #SAÍDA DOS DADOS
+        #********************************************************************        
+        self.T_erdas=Label(self.frame,font=('Arial','10','bold','underline'),
+                        text='Saída de dados')
+        self.T_erdas.grid(row=10,column=11,columnspan=9,sticky=S,pady=27)
+
+        self.T_saida_txt=Label(self.frame, font=('Arial','10','bold'),text='Saída TXT:')
+        self.T_saida_txt.grid(row=11,column=5, columnspan=3)
+        self.E_saida_txt=Entry(self.frame, width=30,textvar=self.var_saida_txt)
+        self.E_saida_txt.grid(row=11,column=8, columnspan=6)
+        self.T_saida_excel=Label(self.frame, font=('Arial','10','bold'),text='Saída Excel:')
+        self.T_saida_excel.grid(row=11,column=15, columnspan=3)
+        self.E_saida_excel=Entry(self.frame, width=30,textvar=self.var_saida_excel)
+        self.E_saida_excel.grid(row=11,column=18, columnspan=6)
+            #_______________________________________
+            #_______________________________________        
         def gerar_saida():
+            #Captura das informações da GUI
             tipo_arquivo=self.var_tipo.get()
             aba=self.var_aba.get()
             nome_arquivo=self.E_entrada.get()
@@ -112,12 +207,23 @@ class Packing:
             mes=float(self.E_mes.get())
             ano=float(self.E_ano.get())
             fuso_horario=float(self.E_fuso_horario.get())
-            densidade=2.67
-            fator_grav=1.20
-            acel_primeira_est=980788.312
+            densidade=float(self.E_densidade.get())
+            fator_grav=float(self.E_fator_grav.get())
+            g_ref=float(self.E_acel_absoluta.get())
 
-            #_______________________________________
-            #_______________________________________
+            wx_deriva=int(self.var_deriva.get())
+            wx_free_air=int(self.var_free_air.get())
+            wx_bouguer=int(self.var_bouguer.get())
+            wx_patm=int(self.var_patm.get())
+            wx_cls=int(self.var_cls.get())
+
+            elipsoide=self.var_elipsoide.get()
+            saida_txt=self.E_saida_txt.get()
+            saida_excel=self.E_saida_excel.get()
+            print(saida_txt,saida_excel)
+
+            
+            #Importação condicional da tabela de dados
             if tipo_arquivo=='excel':
                 planilha_entrada=nome_arquivo 
 
@@ -183,54 +289,82 @@ class Packing:
                         g_conv=np.append(g_conv,gp) 
                 contador=contador+1
 
-                
+            #Cálculo de Aceleração lida absoluta
+            g_abs=g_ref+(g_conv-g_conv[0])
+            
         #Correções e Transformações importantes
         #--------------------------------------------------
-            #Cálculo de Aceleração do GRS67
-            g_teor67=978031.8*(1+0.0053024*((np.sin(Lat_rad))**2)-0.0000059*((np.sin(2*Lat_rad))**2))
-
-            #Cálculo de Aceleração do GRS80
-            g_teor80=978032.7*(1+0.0053024*((np.sin(Lat_rad))**2)-0.0000058*((np.sin(2*Lat_rad))**2))
-
+            if elipsoide=='grs67':
+                #Cálculo de Aceleração do GRS67
+                g_teor=978031.8*(1+0.0053024*((np.sin(Lat_rad))**2)-0.0000059*((np.sin(2*Lat_rad))**2))
+            elif elipsoide=='grs80':
+                #Cálculo de Aceleração do GRS80
+                g_teor=978032.7*(1+0.0053024*((np.sin(Lat_rad))**2)-0.0000058*((np.sin(2*Lat_rad))**2))
+            elif elipsoide=='grs84':
             #Cálculo de Aceleração do GRS84
-            g_teor84=(9.7803267714*((1+0.00193185138639*((np.sin(Lat_rad))**2))/((1-0.00669437999013*((np.sin(Lat_rad))**2)**(1/2)))))*(100000)
+                g_teor=(9.7803267714*((1+0.00193185138639*((np.sin(Lat_rad))**2))/((1-0.00669437999013*((np.sin(Lat_rad))**2)**(1/2)))))*(100000)
 
             #Correção da deriva instrumental
-            delta_t=np.zeros(1)
-            contador2=int(1)
-            while len(delta_t)!=len(hora_dec):
-                dt=hora_dec[contador2]-hora_dec[0]
-                delta_t=np.append(delta_t,dt)
-                contador2=contador2+1 
-            if ponto[0] == ponto[-1]:
-                delta_t[-1]=hora_dec[-1]-hora_dec[0]
-                delta_g=g_conv[-1]-g_conv[0]
-                cd=(-delta_g/delta_t[-1])*delta_t
-
+            if wx_deriva==0:
+                cd=np.zeros(len(ponto))
+            elif wx_deriva==1:
+                delta_t=np.zeros(1)
+                contador2=int(1)
+                while len(delta_t)!=len(hora_dec):
+                    dt=hora_dec[contador2]-hora_dec[0]
+                    delta_t=np.append(delta_t,dt)
+                    contador2=contador2+1 
+                if ponto[0] == ponto[-1]:
+                    delta_t[-1]=hora_dec[-1]-hora_dec[0]
+                    delta_g=g_conv[-1]-g_conv[0]
+                    cd=(-delta_g/delta_t[-1])*delta_t
+                    
             #Correção Bouguer Simples
-            cb=[]
-            for item in alt_m:
-                if item>0:
-                    c_b=0.04192*densidade*item
-                    cb=np.append(cb,c_b)
-                elif item<0:
-                    c_b=0.08384*densidade*item
-                    cb=np.append(cb,c_b)
-                else:
-                    c_b=0
-                    cb=np.append(cb,c_b)
-   
-            #Correção Ar-livre
-            ca=0.3086*alt_m
+            if wx_bouguer==0:
+                cb=np.zeros(len(ponto))
+            elif wx_bouguer==1:
+                cb=[]
+                for item in alt_m:
+                    if item>0:
+                        c_b=0.04192*densidade*item
+                        cb=np.append(cb,c_b)
+                    elif item<0:
+                        c_b=0.08384*densidade*item
+                        cb=np.append(cb,c_b)
+                    else:
+                        c_b=0
+                        cb=np.append(cb,c_b)
 
-            
-            print(g_conv+ca+cb+cd)
+            #Correção Ar-livre
+            if wx_free_air==0:
+                ca=np.zeros(len(ponto))
+            elif wx_free_air==1:
+                ca=0.3086*alt_m
+        
+            #Correção de Pressão atmosférica
+            if wx_patm==0:
+                catm=np.zeros(len(ponto))
+            elif wx_patm==1:
+                catm=-0.036*p_atm_kpa
+                
+            #Correção de Efeito de Maré
+            if wx_cls==0:
+                cls=np.zeros(len(ponto))
+            elif wx_cls==1:
+                print("Ainda em implementação")
+
             #_______________________________________
             #_______________________________________            
-        self.B_entrada_import=Button(text='Reduzir Dados e exportar para arquivos',command=gerar_saida)
-        self.B_entrada_import.grid(row=11,column=11,columnspan=9)
+        self.B_entrada_import=Button(text='Reduzir Dados e Gerar Arquivos',command=gerar_saida)
+        self.B_entrada_import.grid(row=12,column=11,columnspan=9,pady=20)
+
+        self.T_autoria=Label(self.frame, font=('Times New Roman','7','bold','italic'),foreground="gray",
+                             text='Programa  por  Danilo  de  Paula (danilo_p@usp.br),  do  GEOLIT-IAG-USP')
+        self.T_autoria.grid(row=13,column=0,columnspan=11,sticky=W)
 
 
 raiz=Tk()
+raiz.wm_title("GRARED   v.Alpha 0.2")
+raiz.geometry("+10+10")
 Packing(raiz)
 raiz.mainloop()
