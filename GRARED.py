@@ -7,7 +7,6 @@ import numpy as np
 import pandas as pd
 from pandas import ExcelWriter
 from pandas import ExcelFile
-import openpyxl
 import cx_Freeze
 from tkinter import *
 
@@ -57,7 +56,7 @@ class Packing:
         self.var_elipsoide.set('grs84')
 
         self.var_saida_txt=StringVar(toplevel)
-        self.var_saida_txt.set('dados_reduzidos.txt')
+        self.var_saida_txt.set('dados_reduzidos.dat')
         self.var_saida_excel=StringVar(toplevel)
         self.var_saida_excel.set('dados_reduzidos.xlsx')
 
@@ -78,7 +77,7 @@ class Packing:
             self.var_entrada.set('GRARED_P_exemplo.txt')
         self.RB_excel=Radiobutton(self.frame, text='Excel', value='excel', variable=self.var_tipo, command=muda_valor_aba_excel)
         self.RB_excel.grid(row=1,column=4,columnspan=4,sticky=W)
-        self.RB_txt=Radiobutton(self.frame, text='TXT Tabulado', value='txt', variable=self.var_tipo, command=muda_valor_aba_txt)
+        self.RB_txt=Radiobutton(self.frame, text='DAT/TXT', value='txt', variable=self.var_tipo, command=muda_valor_aba_txt)
         self.RB_txt.grid(row=2,column=4,columnspan=4,sticky=W)
         self.T_entrada=Label(self.frame, font=('Arial','10','bold'), text='Arquivo de dados:')
         self.T_entrada.grid(row=1,column=8,columnspan=4,sticky=E)
@@ -189,7 +188,7 @@ class Packing:
                         text='Saída de dados')
         self.T_erdas.grid(row=10,column=11,columnspan=9,sticky=S,pady=27)
 
-        self.T_saida_txt=Label(self.frame, font=('Arial','10','bold'),text='Saída TXT:')
+        self.T_saida_txt=Label(self.frame, font=('Arial','10','bold'),text='Saída DAT/TXT:')
         self.T_saida_txt.grid(row=11,column=5, columnspan=3)
         self.E_saida_txt=Entry(self.frame, width=30,textvar=self.var_saida_txt)
         self.E_saida_txt.grid(row=11,column=8, columnspan=6)
@@ -374,6 +373,7 @@ class Packing:
             cont_df=0
             for df in (df_pt1,df_pt2, df_pt3, df_pt4,df_pt5,df_pt6,df_pt7,df_pt8,df_pt9):
                 df.to_excel(excel_writer, sheet_name='Plan1', startcol=cont_df,index=False)
+                df.to_csv(saida_txt, header=True, index=False, sep='\t', mode='a')
                 cont_df=cont_df+1
             excel_writer.save()
             #_______________________________________
