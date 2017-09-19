@@ -373,9 +373,13 @@ class Packing:
             cont_df=0
             for df in (df_pt1,df_pt2, df_pt3, df_pt4,df_pt5,df_pt6,df_pt7,df_pt8,df_pt9):
                 df.to_excel(excel_writer, sheet_name='Plan1', startcol=cont_df,index=False)
-                df.to_csv(saida_txt, header=True, index=False, sep='\t', mode='a')
                 cont_df=cont_df+1
             excel_writer.save()
+            #DAT/TXT
+            qmm1=['       ']
+            qmm=pd.DataFrame({'       ':qmm1})
+            for df2 in (df_pt1, qmm,df_pt2, qmm,df_pt3, qmm,df_pt4,  qmm,df_pt5,  qmm,df_pt6,  qmm,df_pt7,  qmm,df_pt8,  qmm,df_pt9):
+                df2.to_csv(saida_txt, header=True, index=False, mode='a')
             #_______________________________________
             #_______________________________________            
         self.B_entrada_import=Button(text='Reduzir Dados e Gerar Arquivos',command=gerar_saida)
