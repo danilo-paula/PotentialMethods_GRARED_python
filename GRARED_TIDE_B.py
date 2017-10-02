@@ -1,20 +1,24 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+from datetime import *
 
 radum=0.01745329251
 
 #entradas
-dia=18
-mes=2
-ano=2011
+dia=12
+mes=9
+ano=2017
+
+hora=19
+minuto=30
+
+lat=-22.4967
+long=-43.6783
 
 ano_c=ano+mes/12+(dia+0.5)/365.25
-fuso=0
-hora=8+10/60
-lat=(-(22+44/60))
-long=(-(90+30/60))
-alt=0
-fator_grav=1.17
+fuso=-3
+alt=480
+
 
 #constantes
 radum=0.01745329251
@@ -37,8 +41,23 @@ e_e2=(a**2-b**2)/b**2
 C=(1/(1+e_e2*(np.sin(lat)**2)))**0.5
 r=C*a+100*alt
 a_=1/(c*(1-e**2))
-tj=(ano_c*365.25-((1899+1+(31.5/365.25))*365.25))/(100*365.25)
-t_a=15*((hora-fuso)-12)-long
+
+def jul(my_date):
+    """
+    Returns the Julian day number of a date.
+    http://code-highlights.blogspot.fr/2013/01/julian-date-in-python.html
+    number of days since November 24, 4714 BC
+    """
+    a = (14 - my_date.month)//12
+    y = my_date.year + 4800 - a
+    m = my_date.month + 12*a - 3
+    return my_date.day + ((153*m + 2)//5) + 365*y + y//4 - y//100 + y//400 - 32045
+datam=datetime(ano, mes, dia, hora, minuto)
+datam2=datetime(1899, 12, 31, 0, 0, 0)
+jul1=jul(datam)
+jul2=jul(datam2)
+tj=(jul1-jul2)/(100*365.25)
+t_a=15*(((hora+minuto/60)-fuso)-12)-long
 
 s=(270+(26/60)+(11.72/3600))+(1336*360+1108406.05/3600)*tj+(7.128/3600)*tj**2+(0.0072/3600)*tj**3
 p=(334+(19/60)+(46.42/3600))+(11*360+392522.51/3600)*tj-(37.15/3600)*tj**2-(0.036/3600)*tj**3
@@ -56,10 +75,9 @@ v=np.arctan(senv/cosv) #Rad
 
 senA=np.sin(w_t*radum)*np.sin(N_l*radum)/np.sin(I)
 cosA=(1-senA**2)**0.5 #Advindo de Igc-1
-cosA2=np.cos(N_l*radum)*np.cos(v)+np.sin(N_l*radum)*np.sin(v)*np.cos(w_t*radum) #Recomendado
 A=np.arctan(senA/cosA)
-A2=np.arctan(senA/cosA2)
-eps=N_l-A #--------------Decidir na comparação entre A e A2-----------------
+
+eps=N_l-A
 
 sigma=s-eps
 l=sigma+2*e*np.sin((s-p)*radum)+5/4*e**2*np.sin(2*(s-p)*radum)+15/4*m*e*np.sin((s-2*h_s+p)*radum)+11/8*m**2*np.sin(2*(s-h_s)*radum) #Rad
@@ -85,5 +103,5 @@ senT_s=(1-cosT_s**2)**0.5
 T_s=np.arctan(senT_s/cosT_s) 
 c_s=(G*M_s*r)/(d_s**3)*(3*np.cos(T_s)**2-1)
 
-c_ls=(c_s+c_l)*10000*1.17
-print(c_l,c_s,c_ls)
+c_ls=(c_s+c_l)*1000
+print(c_ls,c_ls*1.2,c_ls*1.23)
