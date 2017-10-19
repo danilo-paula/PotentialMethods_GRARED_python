@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-from datetime import *
 
 radum=0.01745329251
 
@@ -42,20 +41,18 @@ C=(1/(1+e_e2*(np.sin(lat)**2)))**0.5
 r=C*a+100*alt
 a_=1/(c*(1-e**2))
 
-def jul(my_date):
+def jul(anoa, mesa, diaa, horaa, minutoa):
     """
     Returns the Julian day number of a date.
     http://code-highlights.blogspot.fr/2013/01/julian-date-in-python.html
     number of days since November 24, 4714 BC
     """
-    a = (14 - my_date.month)//12
-    y = my_date.year + 4800 - a
-    m = my_date.month + 12*a - 3
-    return my_date.day + ((153*m + 2)//5) + 365*y + y//4 - y//100 + y//400 - 32045
-datam=datetime(ano, mes, dia, hora, minuto)
-datam2=datetime(1899, 12, 31, 0, 0, 0)
-jul1=jul(datam)
-jul2=jul(datam2)
+    a = (14 - mesa)//12
+    y = anoa + 4800 - a
+    m = mesa + 12*a - 3
+    return ((diaa+horaa/24+minutoa/(24*60)) + ((153*m + 2)//5) + 365*y + y//4 - y//100 + y//400 - 32045)
+jul1=jul(ano, mes, dia, hora, minuto)
+jul2=jul(1899, 12, 31, 0, 0, 0)
 tj=(jul1-jul2)/(100*365.25)
 t_a=15*(((hora+minuto/60)-fuso)-12)-long
 

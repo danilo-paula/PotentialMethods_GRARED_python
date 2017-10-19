@@ -41,15 +41,12 @@ class Packing:
         self.var_fator_grav.set(float(1.20))
         self.var_acel_absoluta=DoubleVar(toplevel)
 
-        self.var_deriva=IntVar(toplevel)
-        self.var_deriva.set(int(1))
         self.var_free_air=IntVar(toplevel)
         self.var_free_air.set(int(1))
         self.var_bouguer=IntVar(toplevel)
         self.var_bouguer.set(int(1))
         self.var_patm=IntVar(toplevel)
         self.var_patm.set(int(1))
-        self.var_cls=IntVar(toplevel)
 
         self.var_elipsoide=StringVar(toplevel)
         self.var_elipsoide.set('grs84')
@@ -161,19 +158,15 @@ class Packing:
                         text='Escolha das correções')
         self.T_edas.grid(row=7,column=11,columnspan=9,sticky=S,pady=27)
 
-        self.CB_deriva=Checkbutton(text='Deriva Instrumental', var=self.var_deriva)
-        self.CB_deriva.grid(row=8,column=1,columnspan=5,sticky=N,pady=15)
         self.CB_free_air=Checkbutton(text='Free-Air', var=self.var_free_air)
         self.CB_free_air.grid(row=8,column=7,columnspan=4,sticky=N,pady=15)
         self.CB_bouguer=Checkbutton(text='Bouguer Simples', var=self.var_bouguer)
         self.CB_bouguer.grid(row=8,column=12,columnspan=5,sticky=N,pady=15)
         self.CB_patm=Checkbutton(text='Presão Atmosférica', var=self.var_patm)
         self.CB_patm.grid(row=8,column=18,columnspan=5,sticky=N,pady=15)             
-        self.CB_cls=Checkbutton(text='Efeito de Maré', var=self.var_cls)
-        self.CB_cls.grid(row=8,column=24,columnspan=4,sticky=N,pady=15)
 
-        self.T_elipsoide=Label(self.frame, font=('Arial','10','bold'), text='Elipsoide de referência:')
-        self.T_elipsoide.grid(row=9,column=8,columnspan=5)
+        self.T_elipsoide=Label(self.frame, font=('Arial','10','bold'), text='Elipsoide de referência para Cálculo de Correção de Latitude:')
+        self.T_elipsoide.grid(row=9,column=8,columnspan=6)
         self.RB_grs67=Radiobutton(self.frame, text='GRS67', value='grs67', variable=self.var_elipsoide)
         self.RB_grs67.grid(row=9,column=13,columnspan=3)
         self.RB_grs80=Radiobutton(self.frame, text='GRS80', value='grs80', variable=self.var_elipsoide)
@@ -212,11 +205,9 @@ class Packing:
             fator_grav=float(self.E_fator_grav.get())
             g_ref=float(self.E_acel_absoluta.get())
 
-            wx_deriva=int(self.var_deriva.get())
             wx_free_air=int(self.var_free_air.get())
             wx_bouguer=int(self.var_bouguer.get())
             wx_patm=int(self.var_patm.get())
-            wx_cls=int(self.var_cls.get())
             elipsoide=self.var_elipsoide.get()
             
             saida_txt=self.E_saida_txt.get()
@@ -235,23 +226,26 @@ class Packing:
                 g_l2= p_matriz[2]#Segunda Leitura
                 g_l3= p_matriz[3]#Terceira Leitura
 
-                Lat_gra = p_matriz[4]#Latitude Graus
-                Lat_min = p_matriz[5]#Latitude Minutos
-                Lat_seg = p_matriz[6]#Latitude segundos
+                hora = p_matriz[3]#Hora Local da leitura
+                minuto = p_matriz[4]#Minuto Local da leitura
 
-                Lon_gra = p_matriz[7]#Longitude Graus
-                Lon_min = p_matriz[8]#Longitude Minutos
-                Lon_seg = p_matriz[9]#Longitude segundos
+                h_instrmento=p_matriz[5]
+
+                Lat_gra = p_matriz[6]#Latitude Graus
+                Lat_min = p_matriz[7]#Latitude Minutos
+                Lat_seg = p_matriz[8]#Latitude segundos
+
+                Lon_gra = p_matriz[9]#Longitude Graus
+                Lon_min = p_matriz[10]#Longitude Minutos
+                Lon_seg = p_matriz[11]#Longitude segundos
     
-                alt_m = p_matriz[10]#Altitude geométrica obtida pelos receptores GNSS em metros
-    
-                hora = p_matriz[11]#Hora Local da leitura
-                minuto = p_matriz[12]#Minuto Local da leitura
+                alt_m = p_matriz[12]#Altitude geométrica obtida pelos receptores GNSS em metros
 
                 p_atm_kpa = p_matriz[13]#Pressão atmosférica em kPa
+                
             elif tipo_arquivo=='txt':
                 planilha_entrada=nome_arquivo
-                ponto,g_l1,g_l2,g_l3,Lat_gra,Lat_min,Lat_seg,Lon_gra,Lon_min,Lon_seg,alt_m,hora,minuto,p_atm_kpa=np.loadtxt(planilha_entrada, skiprows=1,unpack=True)
+                ponto,g_l1,g_l2,g_l3,hora,minuto,h_instrmento,Lat_gra,Lat_min,Lat_seg,Lon_gra,Lon_min,Lon_seg,alt_m,p_atm_kpa=np.loadtxt(planilha_entrada, skiprows=1,unpack=True)
 
 
             gc1,gc2,gf0=np.loadtxt(planilha_conv,skiprows=1,unpack=True)
@@ -274,7 +268,9 @@ class Packing:
             jd_inicial=(1461*(1899+4800+(12-14)/12))/4+(367*(12-2-12*(( 12-14)/12)))/12-(3*((1899+4900+(12-14)/12)/100))/4+31-32075
             jd =(1461*(ano+4800+(mes-14)/12))/4+(367*(mes-2-12*(( mes-14)/12)))/12-(3*((ano+4900+(mes-14)/12)/100))/4+dia_c-32075
             jc=((jd-jd_inicial)*24*60)/52596000
-
+            
+        #Correções e Transformações importantes
+        #--------------------------------------------------
             #Conversão de acel. Grav. instrumental para mGal
             g_med_lido = (g_l1+g_l2+g_l3)/3 #Média das 3 leituras
             g_conv=[]
@@ -288,12 +284,34 @@ class Packing:
                         gp=gc2[gc_pos]+(gf0[gc_pos]*(diferença))
                         g_conv=np.append(g_conv,gp) 
                 contador=contador+1
-
-            #Cálculo de Aceleração lida absoluta
-            g_abs=g_ref+(g_conv-g_conv[0])
+                
+            #Correção de maré (A ser implementado)#########################
+            ####################################################################
+            cls=0
+            g_cls=g_conv+cls
+            ####################################################################
             
-        #Correções e Transformações importantes
-        #--------------------------------------------------
+            #Correção de Altura Instrumental
+            c_ai=0.308596*h_instrumento
+            g_ai=g_cls+c_ai
+            
+            #Correção da deriva instrumental
+            delta_t=np.zeros(1)
+            contador2=int(1)
+            while len(delta_t)!=len(hora_dec):
+                dt=hora_dec[contador2]-hora_dec[0]
+                delta_t=np.append(delta_t,dt)
+                contador2=contador2+1 
+            if ponto[0] == ponto[-1]:
+                delta_t[-1]=hora_dec[-1]-hora_dec[0]
+                delta_g=g_ai[-1]-g_ai[0]
+                cd=(-delta_g/delta_t[-1])*delta_t
+                g_cd=g_ai+cd
+                
+            #Cálculo de Aceleração lida absoluta
+            g_abs=g_ref+(g_cd-g_cd[0])
+
+            #Acelerações teóricas
             if elipsoide=='grs67':
                 #Cálculo de Aceleração do GRS67
                 g_teor=978031.8*(1+0.0053024*((np.sin(Lat_rad))**2)-0.0000059*((np.sin(2*Lat_rad))**2))
@@ -303,22 +321,7 @@ class Packing:
             elif elipsoide=='grs84':
             #Cálculo de Aceleração do GRS84
                 g_teor=(9.7803267714*((1+0.00193185138639*((np.sin(Lat_rad))**2))/((1-0.00669437999013*((np.sin(Lat_rad))**2)**(1/2)))))*(100000)
-
-            #Correção da deriva instrumental
-            if wx_deriva==0:
-                cd=np.zeros(len(ponto))
-            elif wx_deriva==1:
-                delta_t=np.zeros(1)
-                contador2=int(1)
-                while len(delta_t)!=len(hora_dec):
-                    dt=hora_dec[contador2]-hora_dec[0]
-                    delta_t=np.append(delta_t,dt)
-                    contador2=contador2+1 
-                if ponto[0] == ponto[-1]:
-                    delta_t[-1]=hora_dec[-1]-hora_dec[0]
-                    delta_g=g_conv[-1]-g_conv[0]
-                    cd=(-delta_g/delta_t[-1])*delta_t
-                    
+            
             #Correção Bouguer Simples
             if wx_bouguer==0:
                 cb=np.zeros(len(ponto))
@@ -339,45 +342,44 @@ class Packing:
             if wx_free_air==0:
                 ca=np.zeros(len(ponto))
             elif wx_free_air==1:
-                ca=0.3086*alt_m
+                ca=0.308596*alt_m
         
             #Correção de Pressão atmosférica
             if wx_patm==0:
                 catm=np.zeros(len(ponto))
             elif wx_patm==1:
                 catm=-0.036*p_atm_kpa
-                
-            #Correção de Efeito de Maré
-            if wx_cls==0:
-                cls=np.zeros(len(ponto))
-            elif wx_cls==1:
-                print("Ainda em implementação")
 
             #Cálculo de redução
-            red=g_abs+cd+ca+cb+catm-g_teor
+            g_abs_corr=g_abs+ca+cb+catm
+            red=g_abs_corr-g_teor
                 
         #Sáida dos dados
         #--------------------------------------------------
             #Excel
             df_pt1=pd.DataFrame({'Ponto':ponto})
-            df_pt2=pd.DataFrame({'Leitura mGal':g_conv})
-            df_pt3=pd.DataFrame({'Leitura absoluta':g_abs})
-            df_pt4=pd.DataFrame({'AcelGrav Teorica':g_teor})
-            df_pt5=pd.DataFrame({'Correção Deriva':cd})
-            df_pt6=pd.DataFrame({'Correção Free-air':ca})
-            df_pt7=pd.DataFrame({'Correção Boug. S.':cb})
-            df_pt8=pd.DataFrame({'Correção P. Atm':catm})
-            df_pt9=pd.DataFrame({'Dados reduzidos':red})
+            df_pt2=pd.DataFrame({'Leitura média Gravímetro':g_med_lido})
+            df_pt3=pd.DataFrame({'Leitura média covertida p/ mGal':g_conv})
+            df_pt4=pd.DataFrame({'Correção de Maré':cls})
+            df_pt5=pd.DataFrame({'Correção de Altura instrumental':c_ai}))            
+            df_pt6=pd.DataFrame({'Correção Deriva':cd})
+            df_pt7=pd.DataFrame({'Acel. corr. Deriva, Maré e Alt. Instr.':g_cd}) 
+            df_pt8=pd.DataFrame({'Correção Free-air':ca})
+            df_pt9=pd.DataFrame({'Correção Boug. S.':cb})
+            df_pt10=pd.DataFrame({'Correção P. Atm':catm}))
+            df_pt11=pd.DataFrame({'Acel. corr. Completa':g_abs_corr})
+            df_pt12=pd.DataFrame({'Aceleração Teórica':g_teor}
+            df_pt13=pd.DataFrame({'Anomalia Grav, Remoção efeitos Lat':red})
             excel_writer=ExcelWriter(saida_excel)
             cont_df=0
-            for df in (df_pt1,df_pt2, df_pt3, df_pt4,df_pt5,df_pt6,df_pt7,df_pt8,df_pt9):
+            for df in (df_pt1,df_pt2, df_pt3, df_pt4,df_pt5,df_pt6,df_pt7,df_pt8,df_pt9,df_pt10):
                 df.to_excel(excel_writer, sheet_name='Plan1', startcol=cont_df,index=False)
                 cont_df=cont_df+1
             excel_writer.save()
             #DAT/TXT
             qmm1=['       ']
             qmm=pd.DataFrame({'       ':qmm1})
-            for df2 in (df_pt1, qmm,df_pt2, qmm,df_pt3, qmm,df_pt4,  qmm,df_pt5,  qmm,df_pt6,  qmm,df_pt7,  qmm,df_pt8,  qmm,df_pt9):
+            for df2 in (df_pt1, qmm,df_pt2, qmm,df_pt3, qmm,df_pt4,  qmm,df_pt5,  qmm,df_pt6,  qmm,df_pt7,  qmm,df_pt8,  qmm,df_pt9,  qmm,df_pt10,  qmm,df_pt11,  qmm,df_pt12,  qmm,df_pt13):
                 df2.to_csv(saida_txt, header=True, index=False, mode='a')
             #_______________________________________
             #_______________________________________            
@@ -390,7 +392,7 @@ class Packing:
 
 
 raiz=Tk()
-raiz.wm_title("GRARED   v.Alpha 0.2")
+raiz.wm_title("GRARED   v.Alpha 0.3")
 raiz.geometry("+10+10")
 Packing(raiz)
 raiz.mainloop()
