@@ -165,7 +165,7 @@ class Packing:
         self.CB_patm=Checkbutton(text='Presão Atmosférica', var=self.var_patm)
         self.CB_patm.grid(row=8,column=18,columnspan=5,sticky=N,pady=15)             
 
-        self.T_elipsoide=Label(self.frame, font=('Arial','10','bold'), text='Elipsoide de referência para Cálculo de Correção de Latitude:')
+        self.T_elipsoide=Label(self.frame, font=('Arial','10','bold'), text='Elipsoide de referência:')
         self.T_elipsoide.grid(row=9,column=8,columnspan=6)
         self.RB_grs67=Radiobutton(self.frame, text='GRS67', value='grs67', variable=self.var_elipsoide)
         self.RB_grs67.grid(row=9,column=13,columnspan=3)
@@ -361,14 +361,14 @@ class Packing:
             df_pt2=pd.DataFrame({'Leitura média Gravímetro':g_med_lido})
             df_pt3=pd.DataFrame({'Leitura média covertida p/ mGal':g_conv})
             df_pt4=pd.DataFrame({'Correção de Maré':cls})
-            df_pt5=pd.DataFrame({'Correção de Altura instrumental':c_ai}))            
+            df_pt5=pd.DataFrame({'Correção de Altura instrumental':c_ai})            
             df_pt6=pd.DataFrame({'Correção Deriva':cd})
             df_pt7=pd.DataFrame({'Acel. corr. Deriva, Maré e Alt. Instr.':g_cd}) 
             df_pt8=pd.DataFrame({'Correção Free-air':ca})
             df_pt9=pd.DataFrame({'Correção Boug. S.':cb})
-            df_pt10=pd.DataFrame({'Correção P. Atm':catm}))
+            df_pt10=pd.DataFrame({'Correção P. Atm':catm})
             df_pt11=pd.DataFrame({'Acel. corr. Completa':g_abs_corr})
-            df_pt12=pd.DataFrame({'Aceleração Teórica':g_teor}
+            df_pt12=pd.DataFrame({'Aceleração Teórica':g_teor})
             df_pt13=pd.DataFrame({'Anomalia Grav, Remoção efeitos Lat':red})
             excel_writer=ExcelWriter(saida_excel)
             cont_df=0
