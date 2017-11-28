@@ -360,7 +360,7 @@ class Packing:
             #Excel
             df_pt1=pd.DataFrame({'Ponto':ponto})
             df_pt2=pd.DataFrame({'Leitura média Gravímetro':g_med_lido})
-            df_pt3=pd.DataFrame({'Leitura média covertida p/ mGal':g_conv})
+            df_pt3=pd.DataFrame({'Leitura média convertida p/ mGal':g_conv})
             df_pt4=pd.DataFrame({'Correção de Maré':cls})
             df_pt5=pd.DataFrame({'Correção de Altura instrumental':c_ai})            
             df_pt6=pd.DataFrame({'Correção Deriva':cd})
