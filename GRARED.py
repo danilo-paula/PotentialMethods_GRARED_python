@@ -229,7 +229,7 @@ class Packing:
                 hora = p_matriz[3]#Hora Local da leitura
                 minuto = p_matriz[4]#Minuto Local da leitura
 
-                h_instrmento=p_matriz[5]
+                h_instrumento=p_matriz[5]
 
                 Lat_gra = p_matriz[6]#Latitude Graus
                 Lat_min = p_matriz[7]#Latitude Minutos
@@ -245,7 +245,7 @@ class Packing:
                 
             elif tipo_arquivo=='txt':
                 planilha_entrada=nome_arquivo
-                ponto,g_l1,g_l2,g_l3,hora,minuto,h_instrmento,Lat_gra,Lat_min,Lat_seg,Lon_gra,Lon_min,Lon_seg,alt_m,p_atm_kpa=np.loadtxt(planilha_entrada, skiprows=1,unpack=True)
+                ponto,g_l1,g_l2,g_l3,hora,minuto,h_instrumento,Lat_gra,Lat_min,Lat_seg,Lon_gra,Lon_min,Lon_seg,alt_m,p_atm_kpa=np.loadtxt(planilha_entrada, skiprows=1,unpack=True)
 
 
             gc1,gc2,gf0=np.loadtxt(planilha_conv,skiprows=1,unpack=True)
@@ -287,8 +287,9 @@ class Packing:
                 
             #Correção de maré (A ser implementado)#########################
             ####################################################################
-            cls=0
-            g_cls=g_conv+cls
+            clsa=0
+            g_cls=g_conv+clsa
+            cls=np.zeros(len(ponto))
             ####################################################################
             
             #Correção de Altura Instrumental
@@ -372,7 +373,7 @@ class Packing:
             df_pt13=pd.DataFrame({'Anomalia Grav, Remoção efeitos Lat':red})
             excel_writer=ExcelWriter(saida_excel)
             cont_df=0
-            for df in (df_pt1,df_pt2, df_pt3, df_pt4,df_pt5,df_pt6,df_pt7,df_pt8,df_pt9,df_pt10):
+            for df in (df_pt1,df_pt2, df_pt3, df_pt4,df_pt5,df_pt6,df_pt7,df_pt8,df_pt9,df_pt10,df_pt11,df_pt12,df_pt13):
                 df.to_excel(excel_writer, sheet_name='Plan1', startcol=cont_df,index=False)
                 cont_df=cont_df+1
             excel_writer.save()
