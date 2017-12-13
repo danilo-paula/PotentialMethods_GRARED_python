@@ -1,29 +1,30 @@
-import cx_Freeze
-import os
-import numpy as np
-import pandas as pd
-from pandas import ExcelWriter
-from pandas import ExcelFile
-from tkinter import *
-from datetime import datetime
-from math import sqrt, atan, asin, acos, sin, cos, radians
-
+import sys, os
+from cx_Freeze import setup, Executable
 
 
 base = None
-
-if sys.platform == 'win32':
+if sys.platform == "win32":
     base = "Win32GUI"
 
-executables = [cx_Freeze.Executable("GRARED.py", base=base, icon="clienticon.ico")]
+executables = [
+        Executable("GRARED.py", base=base)
+]
+
+buildOptions = dict(
+        packages = [],
+        includes = [],
+        include_files = [],
+        excludes = []
+)
+
 
 os.environ['TCL_LIBRARY'] = r'C:\Python35-32\tcl\tcl8.6'
 os.environ['TK_LIBRARY'] = r'C:\Python35-32\tcl\tk8.6'
 
-cx_Freeze.setup(
+setup(
     name = "GRARED",
-    options = {"build_exe": {"packages":["numpy","pandas","tkinter","datetime","math"], "include_files":["clienticon.ico"]}},
-    version = "Alpha 0.5",
+    version = "0.5",
     description = "Gravimetric Data Reduction",
+    options = dict(build_exe = buildOptions),
     executables = executables
-    )
+ )
