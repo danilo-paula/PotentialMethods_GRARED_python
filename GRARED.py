@@ -8,6 +8,139 @@ import pandas as pd
 from pandas import ExcelWriter
 from pandas import ExcelFile
 from tkinter import *
+from datetime import datetime
+from math import sqrt, atan, asin, acos, sin, cos, radians
+
+
+
+#--------------------------------------------------
+#Ambiente Correção de Maré por John Leeman
+#--------------------------------------------------
+# PT----------------------------------------------------------------
+            
+# Código de cálculo de  séculos julianos e  Correção de Maré Terrestre
+# por John Leeman  (contato: <john@leemangeophysical.com> )
+# disponível em: <https://github.com/jrleeman/LongmanTide>
+
+
+# EN----------------------------------------------------------------
+
+# Code of calculation of Julian centuries and Earth Tidal Correction
+# by John Leeman  (contact: <john@leemangeophysical.com>  )
+# available at: <https://github.com/jrleeman/LongmanTide>
+           
+
+class TideModel():
+    def calculate_julian_century(self, timestamp):
+        """
+        Take a datetime object and returns the decimal Julian century and
+        floating point hour. This is in reference to noon on December 31,
+        1899 as stated in the paper.
+        """
+        origin_date = datetime(1899, 12, 31, 12, 00, 00)  # Noon Dec 31, 1899
+        dt = timestamp - origin_date
+        days = dt.days + dt.seconds/3600./24.
+        return days/36525, timestamp.hour + timestamp.minute/60. + timestamp.second/3600.
+
+    def solve_longman(self, lat, lon, alt, time):
+        """
+        Given the location and datetime object, computes the current
+        gravitational tide and associated quantities. Latitude and longitude
+        and in the traditional decimal notation, altitude is in meters, time
+        is a datetime object.
+        """
+
+        T, t0 = self.calculate_julian_century(time)
+
+        if t0 < 0:
+            t0 += 24.
+        if t0 >= 24:
+            t0 -= 24.
+
+        mu = 6.673e-8  # Newton's gravitational constant
+        M = 7.3537e25  # Mass of the moon in grams
+        S = 1.993e33  # Mass of the sun in grams
+        e = 0.05490  # Eccentricity of the moon's orbit
+        m = 0.074804  # Ratio of mean motion of the sun to that of the moon
+        c = 3.84402e10  # Mean distance between the centers of the earth and the moon
+        c1 = 1.495e13  # Mean distance between centers of the earth and sun in cm
+        h2 = 0.612  # Love parameter
+        k2 = 0.303  # Love parameter
+        a = 6.378270e8  # Earth's equitorial radius in cm
+        i = 0.08979719  # (i) Inclination of the moon's orbit to the ecliptic
+        omega = radians(23.452)  # Inclination of the Earth's equator to the ecliptic 23.452 degrees
+        L = -1 * lon  # For some reason his lat/lon is defined with W as + and E as -
+        lamb = radians(lat)  # (lambda) Latitude of point P
+        H = alt * 100.  # (H) Altitude above sea-level of point P in cm
+
+        # Lunar Calculations
+        # (s) Mean longitude of moon in its orbit reckoned from the referred equinox
+        s = 4.72000889397 + 8399.70927456 * T + 3.45575191895e-05 * T * T + 3.49065850399e-08 * T * T * T
+        # (p) Mean longitude of lunar perigee
+        p = 5.83515162814 + 71.0180412089 * T + 0.000180108282532 * T * T + 1.74532925199e-07 * T * T * T
+        # (h) Mean longitude of the sun
+        h = 4.88162798259 + 628.331950894 * T + 5.23598775598e-06 * T * T
+        # (N) Longitude of the moon's ascending node in its orbit reckoned from the referred equinox
+        N = 4.52360161181 - 33.757146295 * T + 3.6264063347e-05 * T * T +  3.39369576777e-08 * T * T * T
+        # (I) Inclination of the moon's orbit to the equator
+        I = acos(cos(omega)*cos(i) - sin(omega)*sin(i)*cos(N))
+        # (nu) Longitude in the celestial equator of its intersection A with the moon's orbit
+        nu = asin(sin(i)*sin(N)/sin(I))
+        # (t) Hour angle of mean sun measured west-ward from the place of observations
+        t = radians(15. * (t0 - 12) - L)
+
+        # (chi) right ascension of meridian of place of observations reckoned from A
+        chi = t + h - nu
+        # cos(alpha) where alpha is defined in eq. 15 and 16
+        cos_alpha = cos(N)*cos(nu)+sin(N)*sin(nu)*cos(omega)
+        # sin(alpha) where alpha is defined in eq. 15 and 16
+        sin_alpha = sin(omega)*sin(N)/sin(I)
+        # (alpha) alpha is defined in eq. 15 and 16
+        alpha = 2*atan(sin_alpha/(1+cos_alpha))
+        # (xi) Longitude in the moon's orbit of its ascending intersection with the celestial equator
+        xi = N-alpha
+
+        # (sigma) Mean longitude of moon in radians in its orbit reckoned from A
+        sigma = s - xi
+        # (l) Longitude of moon in its orbit reckoned from its ascending intersection with the equator
+        l = sigma + 2*e*sin(s-p)+(5./4)*e*e*sin(2*(s-p)) + (15./4)*m*e*sin(s-2*h+p) + (11./8)*m*m*sin(2*(s-h))
+
+        # Sun
+        # (p1) Mean longitude of solar perigee
+        p1 = 4.90822941839 + 0.0300025492114 * T +  7.85398163397e-06 * T * T + 5.3329504922e-08 * T * T * T
+        # (e1) Eccentricity of the Earth's orbit
+        e1 = 0.01675104-0.00004180*T - 0.000000126*T*T
+        # (chi1) right ascension of meridian of place of observations reckoned from the vernal equinox
+        chi1 = t+h
+        # (l1) Longitude of sun in the ecliptic reckoned from the vernal equinox
+        l1 = h + 2*e1*sin(h-p1)
+        # cosine(theta) Theta represents the zenith angle of the moon
+        cos_theta = sin(lamb)*sin(I)*sin(l) + cos(lamb)*(cos(0.5*I)**2 * cos(l-chi) + sin(0.5*I)**2 * cos(l+chi))
+        # cosine(phi) Phi represents the zenith angle of the run
+        cos_phi = sin(lamb)*sin(omega)*sin(l1) + cos(lamb)*(cos(0.5*omega)**2 * cos(l1-chi1)+sin(0.5*omega)**2*cos(l1+chi1))
+
+        # Distance
+        # (C) Distance parameter, equation 34
+        C = sqrt(1./(1+0.006738*sin(lamb)**2))
+        # (r) Distance from point P to the center of the Earth
+        r = C*a + H
+        # (a') Distance parameter, equation 31
+        aprime = 1./(c*(1-e*e))
+        # (a1') Distance parameter, equation 31
+        aprime1 = 1./(c1*(1-e1*e1))
+        # (d) Distance between centers of the Earth and the moon
+        d = 1./((1./c) + aprime*e*cos(s-p)+aprime*e*e*cos(2*(s-p)) + (15./8)*aprime*m*e*cos(s-2*h+p) + aprime*m*m*cos(2*(s-h)))
+        # (D) Distance between centers of the Earth and the sun
+        D = 1./((1./c1) + aprime1*e1*cos(h-p1))
+
+        # (gm) Vertical componet of tidal acceleration due to the moon
+        gm = (mu*M*r/(d*d*d))*(3*cos_theta**2-1) + (3./2)*(mu*M*r*r/(d*d*d*d))*(5*cos_theta**3 - 3*cos_theta)
+        # (gs) Vertical componet of tidal acceleration due to the sun
+        gs = mu*S*r/(D*D*D) * (3*cos_phi**2-1)
+
+        love = (1+h2-1.5*k2)
+        g0 = (gm+gs)*1e3*love
+        return g0
 
 #--------------------------------------------------
 #Ambiente Tkinter
@@ -37,8 +170,6 @@ class Packing:
         self.var_fuso_horario.set(int(-3))
         self.var_densidade=DoubleVar(toplevel)
         self.var_densidade.set(float(2.67))
-        self.var_fator_grav=DoubleVar(toplevel)
-        self.var_fator_grav.set(float(1.20))
         self.var_acel_absoluta=DoubleVar(toplevel)
 
         self.var_free_air=IntVar(toplevel)
@@ -135,15 +266,6 @@ class Packing:
         self.E_densidade=Entry(self.frame, width=6, textvar=self.var_densidade)
         self.E_densidade.grid(row=6,column=11,columnspan=3)
 
-        #Fator Gravimétrico
-        self.T_fator=Label(self.frame,font=('Arial','10','bold'),
-                        text='Fator')
-        self.T_fator.grid(row=4,column=15,columnspan=3)
-        self.T_grav=Label(self.frame,font=('Arial','10','bold'),
-                        text='Gravimétrico')
-        self.T_grav.grid(row=5,column=15,columnspan=3)
-        self.E_fator_grav=Entry(self.frame, width=6, textvar=self.var_fator_grav)
-        self.E_fator_grav.grid(row=6,column=15,columnspan=3)
 
         #Aceleração grav. absoluta da Primeira estação
         self.T_acel_absoluta=Label(self.frame,font=('Arial','10','bold'),
@@ -202,7 +324,6 @@ class Packing:
             ano=float(self.E_ano.get())
             fuso_horario=float(self.E_fuso_horario.get())
             densidade=float(self.E_densidade.get())
-            fator_grav=float(self.E_fator_grav.get())
             g_ref=float(self.E_acel_absoluta.get())
 
             wx_free_air=int(self.var_free_air.get())
@@ -226,22 +347,22 @@ class Packing:
                 g_l2= p_matriz[2]#Segunda Leitura
                 g_l3= p_matriz[3]#Terceira Leitura
 
-                hora = p_matriz[3]#Hora Local da leitura
-                minuto = p_matriz[4]#Minuto Local da leitura
+                hora = p_matriz[4]#Hora Local da leitura
+                minuto = p_matriz[5]#Minuto Local da leitura
 
-                h_instrumento=p_matriz[5]
+                h_instrumento=p_matriz[6]
 
-                Lat_gra = p_matriz[6]#Latitude Graus
-                Lat_min = p_matriz[7]#Latitude Minutos
-                Lat_seg = p_matriz[8]#Latitude segundos
+                Lat_gra = p_matriz[7]#Latitude Graus
+                Lat_min = p_matriz[8]#Latitude Minutos
+                Lat_seg = p_matriz[9]#Latitude segundos
 
-                Lon_gra = p_matriz[9]#Longitude Graus
-                Lon_min = p_matriz[10]#Longitude Minutos
-                Lon_seg = p_matriz[11]#Longitude segundos
+                Lon_gra = p_matriz[10]#Longitude Graus
+                Lon_min = p_matriz[11]#Longitude Minutos
+                Lon_seg = p_matriz[12]#Longitude segundos
     
-                alt_m = p_matriz[12]#Altitude geométrica obtida pelos receptores GNSS em metros
+                alt_m = p_matriz[13]#Altitude geométrica obtida pelos receptores GNSS em metros
 
-                p_atm_kpa = p_matriz[13]#Pressão atmosférica em kPa
+                p_atm_kpa = p_matriz[14]#Pressão atmosférica em kPa
                 
             elif tipo_arquivo=='txt':
                 planilha_entrada=nome_arquivo
@@ -262,13 +383,7 @@ class Packing:
 
             hora_dec=(hora)+(minuto/(60))
             hora_utc=(hora-fuso_horario)
-            
-            #Cálculo de Séculos Julianos à partir de 31/dez/1899
-            dia_c=dia+(hora_utc/24)+(minuto/(60*24))
-            jd_inicial=(1461*(1899+4800+(12-14)/12))/4+(367*(12-2-12*(( 12-14)/12)))/12-(3*((1899+4900+(12-14)/12)/100))/4+31-32075
-            jd =(1461*(ano+4800+(mes-14)/12))/4+(367*(mes-2-12*(( mes-14)/12)))/12-(3*((ano+4900+(mes-14)/12)/100))/4+dia_c-32075
-            jc=((jd-jd_inicial)*24*60)/52596000
-            
+        
         #Correções e Transformações importantes
         #--------------------------------------------------
             #Conversão de acel. Grav. instrumental para mGal
@@ -285,12 +400,17 @@ class Packing:
                         g_conv=np.append(g_conv,gp) 
                 contador=contador+1
                 
-            #Correção de maré (A ser implementado)#########################
-            ####################################################################
-            clsa=0
-            g_cls=g_conv+clsa
-            cls=np.zeros(len(ponto))
-            ####################################################################
+            #Correção de maré
+            cont2=int(0)
+            cls=np.array([])
+            tide=TideModel()
+            while len(cls) != len(ponto):
+                data_l=datetime(int(ano),int(mes),int(dia),int(hora_utc[cont2]),int(minuto[cont2]))
+                cls_a=tide.solve_longman(Lat_graus_dec[cont2],Lon_graus_dec[cont2],alt_m[cont2],data_l)
+                cls=np.append(cls,cls_a)
+                cont2=cont2+1               
+            g_cls=g_conv+cls
+   
             
             #Correção de Altura Instrumental
             c_ai=0.308596*h_instrumento
@@ -358,19 +478,20 @@ class Packing:
         #Sáida dos dados
         #--------------------------------------------------
             #Excel
+            dec=3 #Numero de casa decimais
             df_pt1=pd.DataFrame({'Ponto':ponto})
-            df_pt2=pd.DataFrame({'Leitura média Gravímetro':g_med_lido})
-            df_pt3=pd.DataFrame({'Leitura média convertida p/ mGal':g_conv})
-            df_pt4=pd.DataFrame({'Correção de Maré':cls})
-            df_pt5=pd.DataFrame({'Correção de Altura instrumental':c_ai})            
-            df_pt6=pd.DataFrame({'Correção Deriva':cd})
-            df_pt7=pd.DataFrame({'Acel. corr. Deriva, Maré e Alt. Instr.':g_cd}) 
-            df_pt8=pd.DataFrame({'Correção Free-air':ca})
-            df_pt9=pd.DataFrame({'Correção Boug. S.':cb})
-            df_pt10=pd.DataFrame({'Correção P. Atm':catm})
-            df_pt11=pd.DataFrame({'Acel. corr. Completa':g_abs_corr})
-            df_pt12=pd.DataFrame({'Aceleração Teórica':g_teor})
-            df_pt13=pd.DataFrame({'Anomalia Grav, Remoção efeitos Lat':red})
+            df_pt2=pd.DataFrame({'Leitura média Gravímetro':np.around(g_med_lido, decimals=dec)})
+            df_pt3=pd.DataFrame({'Leitura média convertida p/ mGal':np.around(g_conv, decimals=dec)})
+            df_pt4=pd.DataFrame({'Correção de Maré':np.around(cls, decimals=dec)})
+            df_pt5=pd.DataFrame({'Correção de Altura instrumental':np.around(c_ai, decimals=dec)})            
+            df_pt6=pd.DataFrame({'Correção Deriva':np.around(cd, decimals=dec)})
+            df_pt7=pd.DataFrame({'Acel. corr. Deriva, Maré e Alt. Instr.':np.around(g_cd, decimals=dec)}) 
+            df_pt8=pd.DataFrame({'Correção Free-air':np.around(ca, decimals=dec)})
+            df_pt9=pd.DataFrame({'Correção Boug. S.':np.around(cb, decimals=dec)})
+            df_pt10=pd.DataFrame({'Correção P. Atm':np.around(catm, decimals=dec)})
+            df_pt11=pd.DataFrame({'Acel. corr. Completa':np.around(g_abs_corr, decimals=dec)})
+            df_pt12=pd.DataFrame({'Aceleração Teórica':np.around(g_teor, decimals=dec)})
+            df_pt13=pd.DataFrame({'Anomalia Grav, Remoção efeitos Lat':np.around(red, decimals=dec)})
             excel_writer=ExcelWriter(saida_excel)
             cont_df=0
             for df in (df_pt1,df_pt2, df_pt3, df_pt4,df_pt5,df_pt6,df_pt7,df_pt8,df_pt9,df_pt10,df_pt11,df_pt12,df_pt13):
@@ -393,7 +514,7 @@ class Packing:
 
 
 raiz=Tk()
-raiz.wm_title("GRARED   v.Alpha 0.3")
+raiz.wm_title("GRARED   v.Alpha 0.5")
 raiz.geometry("+10+10")
 Packing(raiz)
 raiz.mainloop()
