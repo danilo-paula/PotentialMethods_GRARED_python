@@ -24,8 +24,8 @@ User recommendations:
 The input files should follow the models available here. Any questions or suggestions, please contact: danilo_p@usp.br, with the following subject: GRARED-USER.
 
 Developer Recommendations:
-For a better understanding of how the elements are positioned on the screen, please use the "GUI.xlsx Planning" worksheet as a guide. Any error that can be corrected or improvement that can be implemented, found in this last file or any other, please give a fork in the project, or send criticisms and suggestions to: danilo_p@usp.br, with the following subject: GRARED- DEV.
+For a better understanding of how the elements are positioned on the screen, please use the "GUI.xlsx Planning" worksheet as a guide. Any error that can be corrected or improvement that can be implemented, found in this last file or any other, please give a fork in the project, or send criticisms and suggestions to: danilo_p@usp.br, with the following subject: GRARED-DEV.
 
-All code and files of this git can be freely used, modified and distributed under the terms of the GNU General Public License - 3.0 (more details on the GPL-3.0 can be seen in the LICENSE file that accompanies this git or at https: //www.gnu.org/licenses/gpl-3.0.en.html).
+All code and files of this git can be freely used, modified and distributed under the terms of the GNU General Public License - 3.0 (more details on the GPL-3.0 can be seen in the LICENSE file that accompanies this git or at https://www.gnu.org/licenses/gpl-3.0.en.html).
 
- Copyright (C) 2017, Danilo de Paula, Litosphere Geophysics Research Group, Institute of Astronomy, Geophysics and Atmospheric Sciences, University of São Paulo.
+Copyright (C) 2017, Danilo de Paula, Litosphere Geophysics Research Group, Institute of Astronomy, Geophysics and Atmospheric Sciences, University of São Paulo.
