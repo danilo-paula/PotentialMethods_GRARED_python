@@ -1,5 +1,7 @@
 # IC_Geolit_Grav_python
+
 Português:
+
 Projeto de Iniciação Científica do núcleo GEOLIT do IAG-USP, visando construir um programa em Python de Redução gravimétrica, com GUI.
 
 Recomendaçõeas ao usuário:
@@ -13,7 +15,9 @@ Todo o código e arquivos deste git podem ser usados, modificados e distribuído
 Copyright (C) 2017, Danilo de Paula, Grupo de Pesquisa de Geofísica da Litosfera, Instituto de Astronomia, Geofísica e Ciências Atmosféricas da Universidade de São Paulo.
 
 -------------------------------------------------------------------------------------------------------------------------------------- 
+
 English:
+
 Scientific Initiation Project of the GEOLIT core of IAG-USP, aiming to build a Python gravimetric reduction program with GUI.
 
 User recommendations:
