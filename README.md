@@ -10,7 +10,8 @@ Para uma melhor compreensão de como é feito o posicionamento dos elementos na 
 
 Todo o código e arquivos deste git podem ser usados, modificados e distribuídos livremente, sob os termos da licença GNU General Public License - 3.0 (mais detalhes sobre o GPL-3.0, podem ser vistos no arquivo LICENSE que acompanha este git ou em https://www.gnu.org/licenses/gpl-3.0.en.html).
 
- Copyright (C) 2017, Danilo de Paula, Grupo de Pesquisa de Geofísica da Litosfera, Instituto de Astronomia, Geofísica e Ciências Atmosféricas da Universidade de São Paulo.
+Copyright (C) 2017, Danilo de Paula, Grupo de Pesquisa de Geofísica da Litosfera, Instituto de Astronomia, Geofísica e Ciências Atmosféricas da Universidade de São Paulo.
+
 -------------------------------------------------------------------------------------------------------------------------------------- 
 English:
 Scientific Initiation Project of the GEOLIT core of IAG-USP, aiming to build a Python gravimetric reduction program with GUI.
