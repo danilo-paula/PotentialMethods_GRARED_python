@@ -304,9 +304,9 @@ class Packing:
         self.T_edas.grid(row=7,column=11,columnspan=9,sticky=S,pady=27)
 
         self.CB_free_air=Checkbutton(text='Free-Air', var=self.var_free_air)
-        self.CB_free_air.grid(row=8,column=7,columnspan=4,sticky=N,pady=15)
+        self.CB_free_air.grid(row=8,column=10,columnspan=4,sticky=N,pady=15)
         self.CB_bouguer=Checkbutton(text='Bouguer Simples', var=self.var_bouguer)
-        self.CB_bouguer.grid(row=8,column=12,columnspan=5,sticky=N,pady=15)             
+        self.CB_bouguer.grid(row=8,column=17,columnspan=5,sticky=N,pady=15)             
 
         self.T_elipsoide=Label(self.frame, font=('Arial','10','bold'), text='Elipsoide de referência:')
         self.T_elipsoide.grid(row=9,column=8,columnspan=6)
@@ -514,13 +514,13 @@ class Packing:
             df_pt2=pd.DataFrame({'Leitura média Gravímetro':np.around(g_med_lido, decimals=dec)})
             df_pt3=pd.DataFrame({'Leitura média mGal':np.around(g_conv, decimals=dec)})
             df_pt4=pd.DataFrame({'Corr. Alt. Instr.':np.around(c_ai, decimals=dec)})
-            df_pt5=pd.DataFrame({'Acel. Corr. Alt. Instrum.':np.around(g_ai, decimals=dec)})            
+            df_pt5=pd.DataFrame({'g. Corr. Alt. Instrum.':np.around(g_ai, decimals=dec)})            
             df_pt6=pd.DataFrame({'Correção de Maré':np.around(cls, decimals=dec)}) 
-            df_pt7=pd.DataFrame({'Acel. Corr. Maré ':np.around(g_cls, decimals=dec)})
-            df_pt8=pd.DataFrame({'Deriva':np.around(cd, decimals=dec)})
-            df_pt9=pd.DataFrame({'Acel. corr. Deriva':np.around(g_cd, decimals=dec)})
-            df_pt10=pd.DataFrame({'Acel. Abs.':np.around(g_abs, decimals=dec)})            
-            df_pt11=pd.DataFrame({'Aceleração Teórica':np.around(g_teor, decimals=dec)})
+            df_pt7=pd.DataFrame({'g. Corr. Maré ':np.around(g_cls, decimals=dec)})
+            df_pt8=pd.DataFrame({'Corr. Deriva':np.around(cd, decimals=dec)})
+            df_pt9=pd.DataFrame({'g. corr. Deriva':np.around(g_cd, decimals=dec)})
+            df_pt10=pd.DataFrame({'g. Obs.':np.around(g_abs, decimals=dec)})            
+            df_pt11=pd.DataFrame({'g Teórico':np.around(g_teor, decimals=dec)})
             df_pt12=pd.DataFrame({'Corr. Ar-livre':np.around(ca, decimals=dec)})
             df_pt13=pd.DataFrame({'Anom. Ar-livre':np.around(g_ca, decimals=dec)})
             df_pt14=pd.DataFrame({'Corr. Bouguer':np.around(cb, decimals=dec)})
@@ -534,10 +534,17 @@ class Packing:
                 cont_df=cont_df+1
             excel_writer.save()
             #DAT/TXT
-            qmm1=['       ']
-            qmm=pd.DataFrame({'       ':qmm1})
-            for df2 in (df_pt1, qmm,df_pt2, qmm,df_pt3, qmm,df_pt4,  qmm,df_pt5,  qmm,df_pt6,  qmm,df_pt7,  qmm,df_pt8,  qmm,df_pt9,  qmm,df_pt10,  qmm,df_pt11,  qmm,df_pt12,  qmm,df_pt13,  qmm,df_pt14,  qmm,df_pt15):
-                df2.to_csv(saida_txt, header=True, index=False, mode='a')
+            dec2=3
+            df={'00_Pt':ponto,'01_LG':np.around(g_med_lido, decimals=dec2),'02_LC':np.around(g_conv, decimals=dec2),
+                '03_C.HI':np.around(c_ai, decimals=dec2),'04_g.HI':np.around(g_ai, decimals=dec2),
+                '05_C.Mar':np.around(cls, decimals=dec2),'06_g.Mar':np.around(g_cls, decimals=dec2),
+                '07_C.Der':np.around(cd, decimals=dec2),'08_g.Der':np.around(g_cd, decimals=dec2),
+                '09_g.Obs':np.around(g_abs, decimals=dec2),'10_g.Teo':np.around(g_teor, decimals=dec2),
+                '11_C.FrA':np.around(ca, decimals=dec2),'12_A.FrA':np.around(g_ca, decimals=dec2),
+                '13_C.Bg':np.around(cb, decimals=dec2),'14_A.Bg':np.around(g_cb, decimals=dec2)}
+            df_pt=pd.DataFrame(data=df)
+            #np.savetxt("PRT_"+saida_txt, df_pt.values,fmt='%1.3f',delimiter='\t')
+            df_pt.to_csv(saida_txt,sep="\t",header=True,index=False, mode='a')
             #_______________________________________
             #_______________________________________            
         self.B_entrada_import=Button(text='Reduzir Dados e Gerar Arquivos',command=gerar_saida)
@@ -549,7 +556,7 @@ class Packing:
 
 
 raiz=Tk()
-raiz.wm_title("GRARED   v.Alpha 0.5")
+raiz.wm_title("GRARED   v.Hawking 1.0")
 raiz.geometry("+10+10")
 Packing(raiz)
 raiz.mainloop()
