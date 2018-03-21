@@ -393,25 +393,34 @@ class Packing:
             
         #Conversões e cálculos preliminares
         #--------------------------------------------------
-            ###Rever e fazer por loop e adição em lista vazia
-            if Lat_gra[0]>=0:    
-                Lat_graus_dec = Lat_gra+(Lat_min/60)+(Lat_seg/3600) #Latitude em Graus decimais
-                Lat_rad=np.radians(Lat_graus_dec) #Latitude em radianos
-            else:
-                Lat_graus_dec = Lat_gra-(Lat_min/60)-(Lat_seg/3600) #Latitude em Graus decimais
-                Lat_rad=np.radians(Lat_graus_dec) #Latitude em radianos
-            if Lon_gra[0]>=0:    
-                Lon_graus_dec = Lon_gra+(Lon_min/60)+(Lon_seg/3600) #Longitude em Graus decimais
-                Lon_rad=np.radians(Lon_graus_dec) #Longitude em radianos
-            else:
-                Lon_graus_dec = Lon_gra-(Lon_min/60)-(Lon_seg/3600) #Longitude em Graus decimais
-                Lon_rad=np.radians(Lon_graus_dec) #Longitude em radianos
+            Lat_graus_dec=[]
+            cont_lat=int(0)
+            while len(Lat_graus_dec) != len(ponto):
+                if Lat_gra[cont_lat]>=0:    
+                    Lat_gd = Lat_gra[cont_lat]+(Lat_min[cont_lat]/60)+(Lat_seg[cont_lat]/3600) #Latitude em Graus decimais
+                else:
+                    Lat_gd = Lat_gra[cont_lat]-(Lat_min[cont_lat]/60)-(Lat_seg[cont_lat]/3600) #Latitude em Graus decimais
+                Lat_graus_dec=np.append(Lat_graus_dec,Lat_gd)
+                cont_lat=cont_lat+1
+            Lat_rad=np.radians(Lat_graus_dec)
+           
+            Lon_graus_dec=[]
+            cont_lon=int(0)
+            while len(Lon_graus_dec) != len(ponto):
+                if Lon_gra[cont_lon]>=0:    
+                    Lon_gd = Lon_gra[cont_lon]+(Lon_min[cont_lon]/60)+(Lon_seg[cont_lon]/3600) #Latitude em Graus decimais
+                else:
+                    Lon_gd = Lon_gra[cont_lon]-(Lon_min[cont_lon]/60)-(Lon_seg[cont_lon]/3600) #Latitude em Graus decimais
+                Lon_graus_dec=np.append(Lon_graus_dec,Lon_gd)
+                cont_lon=cont_lon+1
+            Lon_rad=np.radians(Lon_graus_dec)
 
             alt_cm = alt_m*100 #Altitude geométrica obtida pelos receptores GNSS em centimetros
 
             hora_dec=(hora)+(minuto/(60))
             hora_utc=(hora-fuso_horario)
-        
+            print(Lon_graus_dec[1],Lat_graus_dec[1])
+            
         #Correções e Transformações importantes
         #--------------------------------------------------
             #Média das 3 leituras
