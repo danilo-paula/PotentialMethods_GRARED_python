@@ -511,7 +511,7 @@ class Packing:
             #Cálculo de Aceleração lida absoluta
             g_abs=g_ref+(g_cd-g_cd[0])
             ###Incerteza de Aceleração lida absoluta
-            ç_gabs=(ç_gref**2+ç_gcd)**0.5
+            ç_gabs=(ç_gref**2+ç_gcd**2)**0.5
             
             #Acelerações teóricas
             if elipsoide=='grs67':
