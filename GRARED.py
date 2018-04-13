@@ -11,8 +11,6 @@ from tkinter import *
 from datetime import datetime
 from math import sqrt, atan, asin, acos, sin, cos, radians
 
-
-
 #--------------------------------------------------
 #Ambiente Correção de Maré por John Leeman
 #--------------------------------------------------
@@ -359,26 +357,26 @@ class Packing:
             if tipo_arquivo=='excel':
                 planilha_entrada=nome_arquivo 
 
-                p_mat_ler = pd.read_excel(planilha_entrada, sheetname=aba,header=None,skiprows=2,dtype=float) #Leitura interna da planilha
+                p_mat_ler=pd.read_excel(planilha_entrada, sheetname=aba,header=None,skiprows=2,dtype=float) #Leitura interna da planilha
                 p_matriz=p_mat_ler.values.T #Salvamento da planilha lida em matriz transposta de arrays
 
-                ponto = p_matriz[0]#Identificador do ponto
-                g_l1= p_matriz[1]#Primeira Leitura
-                g_l2= p_matriz[2]#Segunda Leitura
-                g_l3= p_matriz[3]#Terceira Leitura
+                ponto=p_matriz[0]#Identificador do ponto
+                g_l1=p_matriz[1]#Primeira Leitura
+                g_l2=p_matriz[2]#Segunda Leitura
+                g_l3=p_matriz[3]#Terceira Leitura
 
-                hora = p_matriz[4]#Hora Local da leitura
-                minuto = p_matriz[5]#Minuto Local da leitura
+                hora=p_matriz[4]#Hora Local da leitura
+                minuto=p_matriz[5]#Minuto Local da leitura
 
                 h_instrumento=p_matriz[6]
 
-                Lat_gra = p_matriz[7]#Latitude Graus
-                Lat_min = p_matriz[8]#Latitude Minutos
-                Lat_seg = p_matriz[9]#Latitude segundos
+                Lat_gra=p_matriz[7]#Latitude Graus
+                Lat_min=p_matriz[8]#Latitude Minutos
+                Lat_seg=p_matriz[9]#Latitude segundos
 
-                Lon_gra = p_matriz[10]#Longitude Graus
-                Lon_min = p_matriz[11]#Longitude Minutos
-                Lon_seg = p_matriz[12]#Longitude segundos
+                Lon_gra=p_matriz[10]#Longitude Graus
+                Lon_min=p_matriz[11]#Longitude Minutos
+                Lon_seg=p_matriz[12]#Longitude segundos
     
                 alt_m = p_matriz[13]#Altitude geométrica obtida pelos receptores GNSS em metros
 
@@ -393,6 +391,7 @@ class Packing:
             
         #Conversões e cálculos preliminares
         #--------------------------------------------------
+            #Cálculo de Latitude em Graus decimais
             Lat_graus_dec=[]
             cont_lat=int(0)
             while len(Lat_graus_dec) != len(ponto):
@@ -403,7 +402,8 @@ class Packing:
                 Lat_graus_dec=np.append(Lat_graus_dec,Lat_gd)
                 cont_lat=cont_lat+1
             Lat_rad=np.radians(Lat_graus_dec)
-           
+            
+            #Cálculo de Longitude em Graus decimais
             Lon_graus_dec=[]
             cont_lon=int(0)
             while len(Lon_graus_dec) != len(ponto):
@@ -414,13 +414,29 @@ class Packing:
                 Lon_graus_dec=np.append(Lon_graus_dec,Lon_gd)
                 cont_lon=cont_lon+1
             Lon_rad=np.radians(Lon_graus_dec)
-
-            alt_cm = alt_m*100 #Altitude geométrica obtida pelos receptores GNSS em centimetros
-
-            hora_dec=(hora)+(minuto/(60))
-            hora_utc=(hora-fuso_horario)
-            print(Lon_graus_dec[1],Lat_graus_dec[1])
             
+            #Cálculo do tempo em Horas decimais
+            hora_dec=(hora)+(minuto/(60))
+
+            #Horas (sem minutos e segundos) em UTC
+            hora_utc=(hora-fuso_horario)
+
+            #Incertezas iniciais
+            ç_gref=0.03 #Inceerteza da leitura absoluta de referência em mGal
+            ç_g=0.5 #Incerteza da Leitura média em mGal
+            ç_t=0.5/60 #Incerteza do tempo em horas
+            ç_alt=0.5 #Incerteza da altitude em metros
+            ç_ai=0.0005 #Incerteza da altura instrumental em metros
+            #ç_gps=10 #Incerteza associado a Lat/Long em metros
+            #dgr=111120 #1 grau de arco no equador em metros
+            #ç_ll=ç_gps/dgr #Incerteza das coordenadas em graus
+            #ç_llr=ç_ll*np.pi/180 #Incerteza das coordenads em rad
+            #ç_ai=0.0005 #Incerteza da altura instrumental em metros
+            '''
+            ç_ll,ç_ll e ç_ai são incertezas de ordem muito baixa, portanto estão consideradas como desprezíveis para um levantamento relativo normal.
+            Já para o caso de levantamentos na ordem de microGals, favor considerar.            
+            '''
+
         #Correções e Transformações importantes
         #--------------------------------------------------
             #Média das 3 leituras
@@ -442,7 +458,14 @@ class Packing:
             #Correção de Altura Instrumental
             c_ai=0.308596*h_instrumento
             g_ai=g_conv+c_ai
-                
+            ###Incerteza da correção de Altura Instrumental
+            #ç_cai=0.308596*ç_ai
+            ç_cai=0
+            ç_gai=(ç_cai**2+ç_g**2)**0.5
+            '''
+            O valor de ç_cai  observado é desprezível (Aprox. 0.1 microGal)
+            '''
+
             #Correção de maré
             cont2=int(0)
             cls=np.array([])
@@ -453,6 +476,12 @@ class Packing:
                 cls=np.append(cls,cls_a)
                 cont2=cont2+1               
             g_cls=g_ai+cls
+            ###Incerteza da correção de maré
+            ç_cls=0
+            ç_gcls=(ç_cls**2+ç_gai**2)**0.5
+            '''
+            O valor de ç_cls é desprezível
+            '''
 
             #######################################################################
             #---------------Aqui podem ser colocadas outras correções,------------#
@@ -465,36 +494,57 @@ class Packing:
             while len(delta_t)!=len(hora_dec):
                 dt=hora_dec[contador2]-hora_dec[0]
                 delta_t=np.append(delta_t,dt)
-                contador2=contador2+1 
-            if ponto[0] == ponto[-1]:
-                delta_t[-1]=hora_dec[-1]-hora_dec[0]
+                contador2=contador2+1
+            if ponto[0]==ponto[-1]:
                 delta_g=g_cls[-1]-g_cls[0]
                 cd=(-delta_g/delta_t[-1])*delta_t
                 g_cd=g_cls+cd
-
-                
+            ###Incerteza da deriva
+            ç_delta_g=(2**0.5)*ç_g
+            ç_delta_tf=(2**0.5)*ç_t
+            ç_cd=(ç_gcls**2*delta_t[-1]**2*(delta_t[-1]-delta_t)**2+delta_g**2*ç_t**2*(delta_t[-1]**2+delta_t**2))**0.5/delta_t[-1]**2
+            ç_gcd=(ç_gcls**2+ç_cd**2)**0.5
+            '''
+            Mesmo não sendo aqui considero a deriva como tendo correlação 0
+            '''
+            
             #Cálculo de Aceleração lida absoluta
             g_abs=g_ref+(g_cd-g_cd[0])
-
+            ###Incerteza de Aceleração lida absoluta
+            ç_gabs=(ç_gref**2+ç_gcd)**0.5
+            
             #Acelerações teóricas
             if elipsoide=='grs67':
                 #Cálculo de Aceleração do GRS67
                 g_teor=978031.8*(1+0.0053024*((np.sin(Lat_rad))**2)-0.0000059*((np.sin(2*Lat_rad))**2))
+                ###Cálculo de Incerteza
+                #ç_gteor=978032*(ç_llr**2*(0.0053024*np.sin(2*Lat_rad)-0.0000118*np.sin(4*Lat_rad))**2)**0.5
             elif elipsoide=='grs80':
                 #Cálculo de Aceleração do GRS80
                 g_teor=978032.7*(1+0.0053024*((np.sin(Lat_rad))**2)-0.0000058*((np.sin(2*Lat_rad))**2))
+                ###Cálculo de Incerteza
+                #ç_gteor=978033*(ç_llr**2*(0.0053024*np.sin(2*Lat_rad)-0.0000116*np.sin(4*Lat_rad))**2)**0.5                
             elif elipsoide=='grs84':
                 #Cálculo de Aceleração do GRS84
-                g_teor=(9.7803267714*((1+0.00193185138639*((np.sin(Lat_rad))**2))/((1-0.00669437999013*((np.sin(Lat_rad))**2)**(1/2)))))*(100000)
-            
+                g_teor=(9.7803267714*((1+0.00193185138639*((np.sin(Lat_rad))**2))/((1-0.00669437999013*((np.sin(Lat_rad))**2)**(0.5)))))*(100000)
+                ###Cálculo de Incerteza
+                #ç_gteor=8.43211e7*((ç_llr**2*np.sin(Lat_rad)**2*((0.0033471899951*Lat_rad**2+1.7326332753)*np.arctan(Lat_rad)+Lat_rad*(1/(np.sin(Lat_rad)**2)**0.5-0.0066943799901))**2)/((149.37903159-((np.sin(Lat_rad))**2)**0.5)**4))**0.5
+            ç_gteor=0
+            '''
+            Os valores de ç_gteor observados para um erro fixo de 10m (já sendo para um receptor GNSS de navegação um erro considerável)
+            de Lat/Long são desprezíveis (Aprox. 6 microGal)
+            '''
 
+                
             #Correção Ar-livre
             if wx_free_air==0:
                 ca=np.zeros(len(ponto))
                 g_ca=np.zeros(len(ponto))
             elif wx_free_air==1:
                 ca=0.308596*alt_m
-                g_ca=g_abs+ca-g_teor            
+                g_ca=g_abs+ca-g_teor
+            ###Cálculo da Incerteza
+
 
             #Correção Bouguer Simples
             if wx_bouguer==0:
@@ -514,7 +564,6 @@ class Packing:
                         cb=np.append(cb,c_b)
                 g_cb=g_abs+ca-cb-g_teor
 
-                
         #Sáida dos dados
         #--------------------------------------------------
             #Excel
@@ -543,14 +592,13 @@ class Packing:
                 cont_df=cont_df+1
             excel_writer.save()
             #DAT/TXT
-            dec2=3
-            df={'00_Pt':ponto,'01_LG':np.around(g_med_lido, decimals=dec2),'02_LC':np.around(g_conv, decimals=dec2),
-                '03_C.HI':np.around(c_ai, decimals=dec2),'04_g.HI':np.around(g_ai, decimals=dec2),
-                '05_C.Mar':np.around(cls, decimals=dec2),'06_g.Mar':np.around(g_cls, decimals=dec2),
-                '07_C.Der':np.around(cd, decimals=dec2),'08_g.Der':np.around(g_cd, decimals=dec2),
-                '09_g.Obs':np.around(g_abs, decimals=dec2),'10_g.Teo':np.around(g_teor, decimals=dec2),
-                '11_C.FrA':np.around(ca, decimals=dec2),'12_A.FrA':np.around(g_ca, decimals=dec2),
-                '13_C.Bg':np.around(cb, decimals=dec2),'14_A.Bg':np.around(g_cb, decimals=dec2)}
+            df={'00_Pt':ponto,'01_LG':np.around(g_med_lido, decimals=dec),'02_LC':np.around(g_conv, decimals=dec),
+                '03_C.HI':np.around(c_ai, decimals=dec),'04_g.HI':np.around(g_ai, decimals=dec),
+                '05_C.Mar':np.around(cls, decimals=dec),'06_g.Mar':np.around(g_cls, decimals=dec),
+                '07_C.Der':np.around(cd, decimals=dec),'08_g.Der':np.around(g_cd, decimals=dec),
+                '09_g.Obs':np.around(g_abs, decimals=dec),'10_g.Teo':np.around(g_teor, decimals=dec),
+                '11_C.FrA':np.around(ca, decimals=dec),'12_A.FrA':np.around(g_ca, decimals=dec),
+                '13_C.Bg':np.around(cb, decimals=dec),'14_A.Bg':np.around(g_cb, decimals=dec)}
             df_pt=pd.DataFrame(data=df)
             #np.savetxt("PRT_"+saida_txt, df_pt.values,fmt='%1.3f',delimiter='\t')
             df_pt.to_csv(saida_txt,sep="\t",header=True,index=False, mode='a')
