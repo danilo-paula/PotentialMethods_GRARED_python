@@ -282,7 +282,7 @@ class Packing:
                         text='Densidade')
         self.T_densidade.grid(row=4,column=11,columnspan=3)
         self.T_crustal=Label(self.frame,font=('Arial','10','bold'),
-                        text='Crust. (cgs)')
+                        text='Crust. (ton/m³)')
         self.T_crustal.grid(row=5,column=11,columnspan=3)
         self.E_densidade=Entry(self.frame, width=6, textvar=self.var_densidade)
         self.E_densidade.grid(row=6,column=11,columnspan=3)
@@ -427,6 +427,7 @@ class Packing:
             ç_t=0.5/60 #Incerteza do tempo em horas
             ç_alt=0.5 #Incerteza da altitude em metros
             ç_ai=0.0005 #Incerteza da altura instrumental em metros
+            ç_densidade=0.01 ##Incerteza da densidade em
             #ç_gps=10 #Incerteza associado a Lat/Long em metros
             #dgr=111120 #1 grau de arco no equador em metros
             #ç_ll=ç_gps/dgr #Incerteza das coordenadas em graus
@@ -460,7 +461,7 @@ class Packing:
             g_ai=g_conv+c_ai
             ###Incerteza da correção de Altura Instrumental
             #ç_cai=0.308596*ç_ai
-            ç_cai=0
+            ç_cai=np.zeros(len(ponto))
             ç_gai=(ç_cai**2+ç_g**2)**0.5
             '''
             O valor de ç_cai  observado é desprezível (Aprox. 0.1 microGal)
@@ -477,7 +478,7 @@ class Packing:
                 cont2=cont2+1               
             g_cls=g_ai+cls
             ###Incerteza da correção de maré
-            ç_cls=0
+            ç_cls=np.zeros(len(ponto))
             ç_gcls=(ç_cls**2+ç_gai**2)**0.5
             '''
             O valor de ç_cls é desprezível
@@ -511,7 +512,7 @@ class Packing:
             #Cálculo de Aceleração lida absoluta
             g_abs=g_ref+(g_cd-g_cd[0])
             ###Incerteza de Aceleração lida absoluta
-            ç_gabs=(ç_gref**2+ç_gcd**2)**0.5
+            ç_gabs=(ç_gref**2+ç_gcd)**0.5
             
             #Acelerações teóricas
             if elipsoide=='grs67':
@@ -529,7 +530,7 @@ class Packing:
                 g_teor=(9.7803267714*((1+0.00193185138639*((np.sin(Lat_rad))**2))/((1-0.00669437999013*((np.sin(Lat_rad))**2)**(0.5)))))*(100000)
                 ###Cálculo de Incerteza
                 #ç_gteor=8.43211e7*((ç_llr**2*np.sin(Lat_rad)**2*((0.0033471899951*Lat_rad**2+1.7326332753)*np.arctan(Lat_rad)+Lat_rad*(1/(np.sin(Lat_rad)**2)**0.5-0.0066943799901))**2)/((149.37903159-((np.sin(Lat_rad))**2)**0.5)**4))**0.5
-            ç_gteor=0
+            ç_gteor=np.zeros(len(ponto))
             '''
             Os valores de ç_gteor observados para um erro fixo de 10m (já sendo para um receptor GNSS de navegação um erro considerável)
             de Lat/Long são desprezíveis (Aprox. 6 microGal)
@@ -539,30 +540,54 @@ class Packing:
             #Correção Ar-livre
             if wx_free_air==0:
                 ca=np.zeros(len(ponto))
+                ç_ca=np.zeros(len(ponto))
                 g_ca=np.zeros(len(ponto))
+                ###Cálculo das Incertezas
+                ç_ca=np.zeros(len(ponto))
+                ç_gca=(ç_ca**2+ç_gabs**2+ç_gteor**2)**0.5 #Valor de manipulação
+                ç_gca_s=np.zeros(len(ponto)) #Valor de saída
             elif wx_free_air==1:
                 ca=0.308596*alt_m
                 g_ca=g_abs+ca-g_teor
-            ###Cálculo da Incerteza
-
+                ###Cálculo das Incertezas
+                ç_ca=0.308596*ç_alt
+                ç_gca=(ç_ca**2+ç_gabs**2+ç_gteor**2)**0.5 #Valor de manipulação
+                ç_gca_s=ç_gca #Valor de saída
 
             #Correção Bouguer Simples
             if wx_bouguer==0:
                 cb=np.zeros(len(ponto))
                 g_cb=np.zeros(len(ponto))
+                ###Cálculo das Incertezas
+                ç_cb=np.zeros(len(ponto))
+                ç_gcb=0
             elif wx_bouguer==1:
                 cb=[]
+                ç_cb=[]
                 for item in alt_m:
                     if item>0:
                         c_b=0.04192*densidade*item
                         cb=np.append(cb,c_b)
+                        ###Cálculo das Incertezas
+                        ç_c_b=0.04192*(item**2*ç_densidade**2+densidade**2*ç_alt**2)**0.5
+                        ç_cb=np.append(ç_cb,ç_c_b)
                     elif item<0:
                         c_b=0.08384*densidade*item
                         cb=np.append(cb,c_b)
+                        ###Cálculo das Incertezas
+                        ç_c_b=0.08384*(item**2*ç_densidade**2+densidade**2*ç_alt**2)**0.5
+                        ç_cb=np.append(ç_cb,ç_c_b)
                     else:
                         c_b=0
                         cb=np.append(cb,c_b)
+                        ###Cálculo das Incertezas
+                        ç_c_b=0
+                        ç_cb=np.append(ç_cb,ç_c_b)
                 g_cb=g_abs+ca-cb-g_teor
+                ###Cálculo das Incertezas
+                ç_gcb=(ç_ca**2+ç_cb**2)**0.5
+                print(ç_gcb,ç_cb**2,ç_gca,)
+ 
 
         #Sáida dos dados
         #--------------------------------------------------
