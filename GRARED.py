@@ -165,6 +165,11 @@ class TideModel():
         g0 = (gm+gs)*1e3*love
         return g0
 
+    '''
+    End of Longman Tide function
+    ----------------------------
+    Fim da função Maré de Longman
+    '''
 #--------------------------------------------------
 #Ambiente Tkinter
 #--------------------------------------------------
@@ -182,6 +187,8 @@ class Packing:
         self.var_entrada.set('GRARED_P_exemplo.xlsx')
         self.var_conv=StringVar(toplevel)
         self.var_conv.set('Tab_conv_G996.txt')
+        self.var_grav=StringVar(toplevel)
+        self.var_grav.set('996')
 
         self.var_dia=DoubleVar(toplevel)
         self.var_dia.set(int(1))
@@ -237,9 +244,14 @@ class Packing:
         self.E_aba.grid(row=2,column=12,columnspan=6,sticky=W)
   
         self.T_conv=Label(self.frame, font=('Arial','10','bold'), text='    Tabela de Conversão:')
-        self.T_conv.grid(row=1,column=18,columnspan=4,rowspan=2,sticky=E)
+        self.T_conv.grid(row=1,column=18,columnspan=4,rowspan=1,sticky=E)
         self.E_conv=Entry(self.frame, width=30,textvar=self.var_conv)
-        self.E_conv.grid(row=1,column=22,columnspan=6,rowspan=2,sticky=E,padx=15)
+        self.E_conv.grid(row=1,column=22,columnspan=6,rowspan=1,sticky=E,padx=15)
+
+        self.T_grav=Label(self.frame, font=('Arial','10','bold'), text='    N° do Gravímetro:')
+        self.T_grav.grid(row=2,column=18,columnspan=4,rowspan=1,sticky=E)
+        self.E_grav=Entry(self.frame, width=30,textvar=self.var_grav)
+        self.E_grav.grid(row=2,column=22,columnspan=6,rowspan=1,sticky=E,padx=15)
 
         #DADOS DO LEVANTAMENTO
         #********************************************************************
@@ -330,7 +342,9 @@ class Packing:
         self.E_saida_excel=Entry(self.frame, width=30,textvar=self.var_saida_excel)
         self.E_saida_excel.grid(row=11,column=18, columnspan=6)
             #_______________________________________
-            #_______________________________________        
+            #_______________________________________
+        def tabela_conversão():
+            abrir=0
         def gerar_saida():
             #Captura das informações da GUI
             tipo_arquivo=self.var_tipo.get()
