@@ -638,5 +638,6 @@ class Packing:
 raiz=Tk()
 raiz.wm_title("GRARED   v.Hawking 1.0")
 raiz.geometry("+10+10")
+raiz.iconbitmap('icon.ico')
 Packing(raiz)
 raiz.mainloop()
