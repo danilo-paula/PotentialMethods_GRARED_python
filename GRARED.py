@@ -19,6 +19,8 @@ from math import sqrt, atan, asin, acos, sin, cos, radians
 # Código de cálculo de  séculos julianos e  Correção de Maré Terrestre
 # por John Leeman  (contato: <john@leemangeophysical.com> )
 # disponível em: <https://github.com/jrleeman/LongmanTide>
+# Licença: MIT
+# Copyright (c) 2017 John Leeman
 
 
 # EN----------------------------------------------------------------
@@ -26,32 +28,14 @@ from math import sqrt, atan, asin, acos, sin, cos, radians
 # Code of calculation of Julian centuries and Earth Tidal Correction
 # by John Leeman  (contact: <john@leemangeophysical.com>  )
 # available at: <https://github.com/jrleeman/LongmanTide>
+# License: MIT
+# Copyright (c) 2017 John Leeman
 
-"""
-This part of the code provided by John Leeman uses the MIT License, which is written just below:
-
-+MIT License
- +
- +Copyright (c) 2017 John Leeman
- +
- +Permission is hereby granted, free of charge, to any person obtaining a copy
- +of this software and associated documentation files (the "Software"), to deal
- +in the Software without restriction, including without limitation the rights
- +to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- +copies of the Software, and to permit persons to whom the Software is
- +furnished to do so, subject to the following conditions:
- +
- +The above copyright notice and this permission notice shall be included in all
- +copies or substantial portions of the Software.
- +
- +THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- +IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- +FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- +AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- +LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- +OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- +SOFTWARE.
-"""           
+'''
+Start of Longman Tide function
+----------------------------
+Inicio da função Maré de Longman
+'''           
 
 class TideModel():
     def calculate_julian_century(self, timestamp):
@@ -186,7 +170,7 @@ class Packing:
         self.var_entrada=StringVar(toplevel)
         self.var_entrada.set('GRARED_P_exemplo.xlsx')
         self.var_conv=StringVar(toplevel)
-        self.var_conv.set('Tab_conv_G996.txt')
+        self.var_conv.set('Tabelas_conv_todas.xlsx')
         self.var_grav=StringVar(toplevel)
         self.var_grav.set('996')
 
@@ -351,6 +335,7 @@ class Packing:
             aba=self.var_aba.get()
             nome_arquivo=self.E_entrada.get()
             planilha_conv=self.var_conv.get()
+            grav=self.var_grav.get()
 
             dia=float(self.E_dia.get())
             mes=float(self.E_mes.get())
@@ -371,7 +356,7 @@ class Packing:
             if tipo_arquivo=='excel':
                 planilha_entrada=nome_arquivo 
 
-                p_mat_ler=pd.read_excel(planilha_entrada, sheetname=aba,header=None,skiprows=2,dtype=float) #Leitura interna da planilha
+                p_mat_ler=pd.read_excel(planilha_entrada, sheetname=aba,header=None,skiprows=2,dtype=float) #Leitura interna da planilha de dados primária
                 p_matriz=p_mat_ler.values.T #Salvamento da planilha lida em matriz transposta de arrays
 
                 ponto=p_matriz[0]#Identificador do ponto
@@ -382,7 +367,7 @@ class Packing:
                 hora=p_matriz[4]#Hora Local da leitura
                 minuto=p_matriz[5]#Minuto Local da leitura
 
-                h_instrumento=p_matriz[6]
+                h_instrumento=p_matriz[6]#Altura instrumental
 
                 Lat_gra=p_matriz[7]#Latitude Graus
                 Lat_min=p_matriz[8]#Latitude Minutos
@@ -393,16 +378,17 @@ class Packing:
                 Lon_seg=p_matriz[12]#Longitude segundos
     
                 alt_m = p_matriz[13]#Altitude geométrica obtida pelos receptores GNSS em metros
-
-
                 
             elif tipo_arquivo=='txt':
                 planilha_entrada=nome_arquivo
                 ponto,g_l1,g_l2,g_l3,hora,minuto,h_instrumento,Lat_gra,Lat_min,Lat_seg,Lon_gra,Lon_min,Lon_seg,alt_m=np.loadtxt(planilha_entrada, skiprows=1,unpack=True)
 
+            p_conv_ler=pd.read_excel(planilha_conv, sheetname=grav,header=None,dtype=float) #Leitura interna da planilha de conversão
+            p_matriz_c=p_conv_ler.values.T #Salvamento da planilha lida em matriz transposta de arrays
+            gc1=p_matriz_c[0]
+            gc2=p_matriz_c[1]
+            gf0=p_matriz_c[2]
 
-            gc1,gc2,gf0=np.loadtxt(planilha_conv,skiprows=1,unpack=True)
-            
         #Conversões e cálculos preliminares
         #--------------------------------------------------
             #Cálculo de Latitude em Graus decimais
@@ -600,8 +586,6 @@ class Packing:
                 g_cb=g_abs+ca-cb-g_teor
                 ###Cálculo das Incertezas
                 ç_gcb=(ç_ca**2+ç_cb**2)**0.5
-                print(ç_gcb,ç_cb**2,ç_gca,)
- 
 
         #Sáida dos dados
         #--------------------------------------------------
