@@ -4,11 +4,5 @@ python:
   - "3.6.4"
   - "pypy3.5"
 # command to install dependencies
-install:
-  - pip install numpy
-  - pip install pandas
-  - pip install tkinter
-  - pip install ExcelWriter
-  - pip install ExcelReader
 # command to run tests
 script: GRARED.py
