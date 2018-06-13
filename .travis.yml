@@ -1,5 +1,0 @@
-os: win10
-language: python
-python:
-  - "3.6.4"
-  - "pypy3.5"
