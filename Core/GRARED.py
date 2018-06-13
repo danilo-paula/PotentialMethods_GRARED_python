@@ -157,52 +157,56 @@ class TideModel():
 #--------------------------------------------------
 #Ambiente Tkinter
 #--------------------------------------------------
-class Packing:
-    def __init__(self, toplevel):
-        self.frame=Frame(toplevel).grid()
+class Packing: #GUI codes for packing
+    def __init__(self, toplevel): 
+        self.frame=Frame(toplevel).grid() #Main window
+
+        #Input files variables
+        self.var_tipo=StringVar(toplevel) #Type of input FIle
+        self.var_tipo.set('excel') #Set the variable Type of input file to Excel
+        self.var_aba=StringVar(toplevel) #Excel tab
+        self.var_aba.set('Plan1') #Ste Ecel tab o Plan1 (is the Excel standard)
+        self.var_entrada=StringVar(toplevel) #Name of File
+        self.var_entrada.set('GRARED_P_exemplo.xlsx') #Set Name of file to GRARED standard
+        self.var_conv=StringVar(toplevel) #Name of conversion table
+        self.var_conv.set('Tabelas_conv_todas.xlsx') #Set Name of Conversion table to GRARED standard
+        self.var_grav=StringVar(toplevel) #Gravimeter number
+        self.var_grav.set('996') #Set Gravimeter number to 996 (which is one of the most used gravimeters in IAG-USP)
+
+        #Data variables
+        self.var_dia=DoubleVar(toplevel) #Day of survey
+        self.var_dia.set(int(1)) #Set Day of Survey to 1
+        self.var_mes=DoubleVar(toplevel) #Month of Survey
+        self.var_mes.set(int(1)) #Set Month of Survey to 1
+        self.var_ano=DoubleVar(toplevel) #Year of Survey
+        self.var_ano.set(int(2017)) #Set Year of survey to 2017
+        self.var_fuso_horario=DoubleVar(toplevel) #Timezone
+        self.var_fuso_horario.set(int(-3)) #Set Timezone to -3 (São Paulo timezone)
+        self.var_densidade=DoubleVar(toplevel) #Crustal density
+        self.var_densidade.set(float(2.67)) #Set Crustal Density to 2.67 ton/m^3 (mean crustal density)
+        self.var_acel_absoluta=DoubleVar(toplevel) #Absolute Gravity Aceleration
 
         
-        #Variáveis de entrada      
-        self.var_tipo=StringVar(toplevel)
-        self.var_tipo.set('excel')
-        self.var_aba=StringVar(toplevel)
-        self.var_aba.set('Plan1')
-        self.var_entrada=StringVar(toplevel)
-        self.var_entrada.set('GRARED_P_exemplo.xlsx')
-        self.var_conv=StringVar(toplevel)
-        self.var_conv.set('Tabelas_conv_todas.xlsx')
-        self.var_grav=StringVar(toplevel)
-        self.var_grav.set('996')
+        #Chose of correction variables
+        self.var_free_air=IntVar(toplevel) #Free-air checkbox bool
+        self.var_free_air.set(int(1)) #Set ON Free-air checkbox bool
+        self.var_bouguer=IntVar(toplevel) #Bouguer checkbox bool
+        self.var_bouguer.set(int(1)) #Set ON Bouguer checkbox bool
 
-        self.var_dia=DoubleVar(toplevel)
-        self.var_dia.set(int(1))
-        self.var_mes=DoubleVar(toplevel)
-        self.var_mes.set(int(1))
-        self.var_ano=DoubleVar(toplevel)
-        self.var_ano.set(int(2017))
-        self.var_fuso_horario=DoubleVar(toplevel)
-        self.var_fuso_horario.set(int(-3))
-        self.var_densidade=DoubleVar(toplevel)
-        self.var_densidade.set(float(2.67))
-        self.var_acel_absoluta=DoubleVar(toplevel)
+        #Chose of elipsoid variables
+        self.var_elipsoide=StringVar(toplevel) #Reference ellipsoid
+        self.var_elipsoide.set('grs84') #Set reference ellipsoid to GRS84 (The most recent ellipsoid)
 
-        self.var_free_air=IntVar(toplevel)
-        self.var_free_air.set(int(1))
-        self.var_bouguer=IntVar(toplevel)
-        self.var_bouguer.set(int(1))
-
-        self.var_elipsoide=StringVar(toplevel)
-        self.var_elipsoide.set('grs84')
-
-        self.var_saida_txt=StringVar(toplevel)
-        self.var_saida_txt.set('dados_reduzidos.dat')
-        self.var_saida_excel=StringVar(toplevel)
-        self.var_saida_excel.set('dados_reduzidos.xlsx')
+        #Output files variables
+        self.var_saida_txt=StringVar(toplevel) #Name of Output DAT/TXT file
+        self.var_saida_txt.set('dados_reduzidos.dat') #Set #Name of Output DAT/TXT file to GRARED standard
+        self.var_saida_excel=StringVar(toplevel) #Name of Output Excel file
+        self.var_saida_excel.set('dados_reduzidos.xlsx') #Set Name of Output Excel file to GRARED standard
 
         #ENTRADA DE DADOS
         #*******************************************************************************
         self.T_entrada_de_dados=Label(self.frame,font=('Arial','10','bold','underline'),
-                                     text='Entrada de dados')
+                                     text='Entrada de dados') #Header of Data Input
         self.T_entrada_de_dados.grid(row=0,column=11,columnspan=9,sticky=S,pady=27)
         
         self.T_tipo_arquivo_entrada=Label(self.frame,font=('Arial','10','bold'),
