@@ -2,7 +2,7 @@
 
 Português:
 
-Projeto de Iniciação Científica do núcleo GEOLIT do IAG-USP, visando construir um programa em Python de Redução gravimétrica, com GUI.
+Projeto de Iniciação Científica e Estágio do núcleo de Gravimetria, Magnetometria e Gamespectrometria do IAG-USP, visando construir um programa em Python de Redução gravimétrica, com GUI.
 
 Recomendaçõeas ao usuário:
 Os arquivos de entrada devem seguir os modelos aqui disponibilizados. Qualquer dúvida ou sugestão, favor entrar em contato com: danilo_p@usp.br , com o seguinte assunto: GRARED-USER.
@@ -18,7 +18,7 @@ Copyright (C) 2017-2018, Danilo de Paula, Grupo de Pesquisa de Geofísica da Lit
 
 English:
 
-Scientific Initiation Project of the GEOLIT core of IAG-USP, aiming to build a Python gravimetric reduction program with GUI.
+Scientific Initiation and Internship Project of the nucleus of Gravimetry, Magnetometry and Gamespectrometry of IAG-USP, aiming to build a Python gravimetric reduction program with GUI.
 
 User recommendations:
 The input files should follow the models available here. Any questions or suggestions, please contact: danilo_p@usp.br, with the following subject: GRARED-USER.
