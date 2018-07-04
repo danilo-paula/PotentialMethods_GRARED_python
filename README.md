@@ -2,7 +2,7 @@
 
 Português:
 
-Projeto de Iniciação Científica e Estágio do núcleo de Gravimetria, Magnetometria e Gamespectrometria do IAG-USP, visando construir um programa em Python de Redução gravimétrica, com GUI.
+Projeto de Iniciação Científica e Estágio do Laboratório de Métodos Potenciais do IAG-USP, visando construir um programa em Python de Redução gravimétrica, com GUI.
 
 Recomendaçõeas ao usuário:
 Os arquivos de entrada devem seguir os modelos aqui disponibilizados. Qualquer dúvida ou sugestão, favor entrar em contato com: danilo_p@usp.br , com o seguinte assunto: GRARED-USER.
@@ -12,13 +12,13 @@ Para uma melhor compreensão de como é feito o posicionamento dos elementos na 
 
 Todo o código e arquivos, com exceção de partes de código ou arquivos com autoria atribuída a outros autores, deste git podem ser usados, modificados e distribuídos livremente, sob os termos da licença MIT.
 
-Copyright (C) 2017-2018, Danilo de Paula, Laboratório de Gravimetria, Magnetometria e Gamespectrometria, Instituto de Astronomia, Geofísica e Ciências Atmosféricas da Universidade de São Paulo.
+Copyright (C) 2017-2018, Danilo de Paula, Laboratório de Métodos Potenciais, Instituto de Astronomia, Geofísica e Ciências Atmosféricas da Universidade de São Paulo.
 
 -------------------------------------------------------------------------------------------------------------------------------------- 
 
 English:
 
-Scientific Initiation and Internship Project of the nucleus of Gravimetry, Magnetometry and Gamespectrometry of IAG-USP, aiming to build a Python gravimetric reduction program with GUI.
+Scientific Initiation and Internship Project of the Laboratory of Potential Methods of IAG-USP, aiming to build a Python gravimetric reduction program with GUI.
 
 User recommendations:
 The input files should follow the models available here. Any questions or suggestions, please contact: danilo_p@usp.br, with the following subject: GRARED-USER.
@@ -28,4 +28,4 @@ For a better understanding of how the elements are positioned on the screen, ple
 
 All code and files of this git, with the exception of parts of code or files with authorship attributed to other authors, can be freely used, modified and distributed under the terms of the MIT License.
 
-Copyright (C) 2017-2018, Danilo de Paula, Gravimetry, Magnetometry and Gamespectrometry Laboratory, Institute of Astronomy, Geophysics and Atmospheric Sciences, University of São Paulo.
+Copyright (C) 2017-2018, Danilo de Paula, Laboratory of Potential Methods, Institute of Astronomy, Geophysics and Atmospheric Sciences, University of São Paulo.
