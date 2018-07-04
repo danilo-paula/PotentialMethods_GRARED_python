@@ -12,7 +12,7 @@ Para uma melhor compreensão de como é feito o posicionamento dos elementos na 
 
 Todo o código e arquivos, com exceção de partes de código ou arquivos com autoria atribuída a outros autores, deste git podem ser usados, modificados e distribuídos livremente, sob os termos da licença MIT.
 
-Copyright (C) 2017-2018, Danilo de Paula, Grupo de Pesquisa de Geofísica da Litosfera, Instituto de Astronomia, Geofísica e Ciências Atmosféricas da Universidade de São Paulo.
+Copyright (C) 2017-2018, Danilo de Paula, Laboratório de Gravimetria, Magnetometria e Gamespectrometria, Instituto de Astronomia, Geofísica e Ciências Atmosféricas da Universidade de São Paulo.
 
 -------------------------------------------------------------------------------------------------------------------------------------- 
 
@@ -28,4 +28,4 @@ For a better understanding of how the elements are positioned on the screen, ple
 
 All code and files of this git, with the exception of parts of code or files with authorship attributed to other authors, can be freely used, modified and distributed under the terms of the MIT License.
 
-Copyright (C) 2017-2018, Danilo de Paula, Litosphere Geophysics Research Group, Institute of Astronomy, Geophysics and Atmospheric Sciences, University of São Paulo.
+Copyright (C) 2017-2018, Danilo de Paula, Gravimetry, Magnetometry and Gamespectrometry Laboratory, Institute of Astronomy, Geophysics and Atmospheric Sciences, University of São Paulo.
