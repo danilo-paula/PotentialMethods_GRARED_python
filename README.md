@@ -1,5 +1,11 @@
 # IC_Geolit_Grav_python
 
+-------------------------------------------------------------------------------------------------------------------------------------- 
+# Before using:
+
+**Install the latest version of Anaconda, and GDAL library.
+-------------------------------------------------------------------------------------------------------------------------------------- 
+
 Português:
 
 Projeto de Iniciação Científica e Estágio do Laboratório de Métodos Potenciais do IAG-USP, visando construir um programa em Python de Redução gravimétrica, com GUI.
@@ -29,3 +35,4 @@ For a better understanding of how the elements are positioned on the screen, ple
 All code and files of this git, with the exception of parts of code or files with authorship attributed to other authors, can be freely used, modified and distributed under the terms of the MIT License.
 
 Copyright (C) 2017-2018, Danilo de Paula, Laboratory of Potential Methods, Institute of Astronomy, Geophysics and Atmospheric Sciences, University of São Paulo.
+
