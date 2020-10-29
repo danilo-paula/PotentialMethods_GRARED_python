@@ -167,7 +167,7 @@ class Packing: #GUI codes for packing
         self.var_aba=StringVar(toplevel) #Excel tab
         self.var_aba.set('Plan1') #Ste Ecel tab o Plan1 (is the Excel standard)
         self.var_entrada=StringVar(toplevel) #Name of File
-        self.var_entrada.set('GRARED_P_exemplo.xlsx') #Set Name of file to GRARED standard
+        self.var_entrada.set('GRARED_P.xlsx') #Set Name of file to GRARED standard
         self.var_conv=StringVar(toplevel) #Name of conversion table
         self.var_conv.set('Tabelas_conv_todas.xlsx') #Set Name of Conversion table to GRARED standard
         self.var_grav=StringVar(toplevel) #Gravimeter number
@@ -360,7 +360,7 @@ class Packing: #GUI codes for packing
             if tipo_arquivo=='excel':
                 planilha_entrada=nome_arquivo 
 
-                p_mat_ler=pd.read_excel(planilha_entrada, sheetname=aba,header=None,skiprows=2,dtype=float) #Leitura interna da planilha de dados primária
+                p_mat_ler=pd.read_excel(planilha_entrada, sheet_name=aba,header=None,skiprows=2,dtype=float) #Leitura interna da planilha de dados primária
                 p_matriz=p_mat_ler.values.T #Salvamento da planilha lida em matriz transposta de arrays
 
                 ponto=p_matriz[0]#Identificador do ponto
@@ -387,7 +387,7 @@ class Packing: #GUI codes for packing
                 planilha_entrada=nome_arquivo
                 ponto,g_l1,g_l2,g_l3,hora,minuto,h_instrumento,Lat_gra,Lat_min,Lat_seg,Lon_gra,Lon_min,Lon_seg,alt_m=np.loadtxt(planilha_entrada, skiprows=1,unpack=True)
 
-            p_conv_ler=pd.read_excel(planilha_conv, sheetname=grav,header=None,dtype=float) #Leitura interna da planilha de conversão
+            p_conv_ler=pd.read_excel(planilha_conv, sheet_name=grav,header=None,dtype=float) #Leitura interna da planilha de conversão
             p_matriz_c=p_conv_ler.values.T #Salvamento da planilha lida em matriz transposta de arrays
             gc1=p_matriz_c[0]
             gc2=p_matriz_c[1]
