@@ -4,7 +4,7 @@
 
 # Before using: #
 
-**Install the latest version of Anaconda, and GDAL library.
+**Install the latest version of Anaconda (For Python 3.X), and GDAL library.
 
 -------------------------------------------------------------------------------------------------------------------------------------- 
 
