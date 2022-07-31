@@ -2,7 +2,7 @@
 
 --------------------------------------------------------------------------------------------------------------------------------------
 
-# Before using: #
+#Antes de Usar // Before using: #
 
 **Install the latest version of Anaconda (For Python 3.X)
 
