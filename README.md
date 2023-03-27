@@ -32,7 +32,7 @@ User recommendations:
 The input files should follow the models available here. Any questions or suggestions, please contact: de.paula.geoservices@gmail.com or d188367@unicamp.com.br, with the following subject: GRARED-USER.
 
 Developer Recommendations:
-For a better understanding of how the elements are positioned on the screen, please use the "Planejamento da GUI.xlsx" worksheet as a guide. Any error that can be corrected or improvement that can be implemented, found in this last file or any other, pleas send criticisms and suggestions to: de.paula.geoservices@gmail.com ou d188367@unicamp.com.br, with the following subject: GRARED-DEV.
+For a better understanding of how the elements are positioned on the screen, please use the "Planejamento da GUI.xlsx" worksheet as a guide. Any error that can be corrected or improvement that can be implemented, found in this last file or any other, pleas send criticisms and suggestions to: de.paula.geoservices@gmail.com ou danilo_p@usp.br, with the following subject: GRARED-DEV.
 
 All code and files of this git, with the exception of parts of code or files with authorship attributed to other authors, can be freely used, modified and distributed under the terms of the MIT License.
 
